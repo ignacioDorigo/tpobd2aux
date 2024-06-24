@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Cliente</title>
+    <title>Recuperar Contraseña</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,7 +47,7 @@
             border-color: #007BFF;
         }
         .form-container button {
-            margin: 20px 0 10px;
+            margin-top: 20px;
             padding: 15px 30px;
             font-size: 16px;
             border: none;
@@ -62,39 +62,39 @@
             background-color: #0056b3;
             box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
         }
+        .form-container .message {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+        .form-container .error-message {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
     <div class="form-container">
-        <h1>Registro de Cliente</h1>
-        <form id="registerForm">
-            <input type="email" id="mail" name="mail" placeholder="Correo electrónico" required>
-            <input type="password" id="password" name="password" placeholder="Contraseña" required>
-            <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
-            <input type="text" id="apellido" name="apellido" placeholder="Apellido" required>
-            <input type="text" id="documento" name="documento" placeholder="Documento" required>
-            <input type="text" id="direccion" name="direccion" placeholder="Dirección" required>
-            <button type="button" onclick="registerCliente()">Registrarse</button>
+        <h1>Recuperar Contraseña</h1>
+        <form id="recoverForm">
+            <input type="email" id="mail" name="mail" placeholder="Ingrese su correo electrónico" required>
+            <button type="button" onclick="recoverPassword()">Recuperar</button>
         </form>
+        <div id="message" class="message"></div>
+        <div id="errorMessage" class="error-message"></div>
     </div>
 
     <script>
-        function registerCliente() {
+        function recoverPassword() {
             const mail = document.getElementById('mail').value;
-            const password = document.getElementById('password').value;
-            const nombre = document.getElementById('nombre').value;
-            const apellido = document.getElementById('apellido').value;
-            const documento = document.getElementById('documento').value;
-            const direccion = document.getElementById('direccion').value;
-            const url = `http://localhost:8080/tpo/registerCliente`;
-            const params = `mail=${encodeURIComponent(mail)}&password=${encodeURIComponent(password)}&nombre=${encodeURIComponent(nombre)}&apellido=${encodeURIComponent(apellido)}&documento=${encodeURIComponent(documento)}&direccion=${encodeURIComponent(direccion)}`;
+            const url = `http://localhost:8080/tpo/recuperarContraseniaCliente?mail=${encodeURIComponent(mail)}`;
             
             fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: params
+                }
             })
             .then(response => {
                 if (!response.ok) {
@@ -103,12 +103,14 @@
                 return response.text();
             })
             .then(data => {
-                alert('Registro exitoso');
-                window.location.href = 'LoginCliente.html'; // Redirigir al login de cliente después del registro exitoso
+                document.getElementById('message').textContent = 'Se ha enviado la contraseña al correo electrónico proporcionado';
+                document.getElementById('errorMessage').textContent = '';
+                document.getElementById('mail').value = ''; // Limpiar el campo de email si se envió correctamente
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error en el registro');
+                document.getElementById('errorMessage').textContent = 'Error al intentar recuperar la contraseña';
+                document.getElementById('message').textContent = '';
             });
         }
     </script>
