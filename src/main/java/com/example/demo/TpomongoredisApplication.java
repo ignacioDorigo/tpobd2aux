@@ -7,10 +7,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.example.demo.modelo.Cliente;
-import com.example.demo.modelo.Detalle;
-import com.example.demo.modelo.Factura;
-import com.example.demo.modelo.Producto;
 import com.example.demo.service.AdminService;
 import com.example.demo.service.ClienteService;
 import com.example.demo.service.ProductoService;

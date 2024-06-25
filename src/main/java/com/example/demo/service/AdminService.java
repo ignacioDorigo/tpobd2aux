@@ -53,6 +53,33 @@ public class AdminService {
 		System.out.println("Guardado en Redis");
 	}
 
+	public boolean loginRedis(String mail, String password) {
+		LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory();
+		connectionFactory.afterPropertiesSet(); // Inicializa la fábrica de conexiones
+
+		RedisTemplate<String, String> template = new RedisTemplate<>();
+		template.setConnectionFactory(connectionFactory);
+		template.setDefaultSerializer(StringRedisSerializer.UTF_8);
+		template.afterPropertiesSet();
+
+//		Si encuentra el mail, devuelve el password
+		String resultado = template.opsForValue().get(mail);
+		if (resultado != null) {
+			System.out.println("Mail Redis encontrado");
+			if (resultado.equals(password)) {
+				System.out.println("Login Exitoso en redis");
+				return true;
+			} else {
+				System.out.println("La contrasenia es invalida");
+				return false;
+			}
+		} else {
+			System.out.println("Mail Redis No encontrado");
+			return false;
+		}
+
+	}
+
 	public String registerAdmin(String mail, String password, String nombre, String apellido, String documento) {
 		Optional<Admin> adminOptional = repositorio.findById(mail);
 		if (adminOptional.isEmpty()) {
@@ -80,7 +107,7 @@ public class AdminService {
 
 	public String loginAdmin(String mail, String password) {
 		Optional<Admin> adminOptional = repositorio.findById(mail);
-		if (adminOptional.isPresent()) {
+		if (loginRedis(mail, password) && adminOptional.isPresent()) {
 			Admin admin = adminOptional.get();
 			if (admin.getPassword().equals(password)) {
 				return "Login Exitoso";

@@ -56,13 +56,38 @@ public class ClienteService {
 
 		String mailAdmin = cliente.getMail();
 		String password = cliente.getPassword();
-//      Guardamos el objeto (clave , valor)
+// 
 		template.opsForValue().set(mailAdmin, password);
-////      Mostrar objeto guardado
-//		System.out.println(template.opsForValue().get("pedro@gmail.com"));
-		// Cerrar la fábrica de conexiones
+
 		connectionFactory.destroy();
 		System.out.println("Guardado en Redis");
+	}
+
+	public boolean loginRedis(String mail, String password) {
+		LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory();
+		connectionFactory.afterPropertiesSet();
+
+		RedisTemplate<String, String> template = new RedisTemplate<>();
+		template.setConnectionFactory(connectionFactory);
+		template.setDefaultSerializer(StringRedisSerializer.UTF_8);
+		template.afterPropertiesSet();
+
+//		Si encuentra el mail, devuelve el password
+		String resultado = template.opsForValue().get(mail);
+		if (resultado != null) {
+			System.out.println("Mail Redis encontrado");
+			if (resultado.equals(password)) {
+				System.out.println("Login Exitoso en redis");
+				return true;
+			} else {
+				System.out.println("La contrasenia es invalida");
+				return false;
+			}
+		} else {
+			System.out.println("Mail Redis No encontrado");
+			return false;
+		}
+
 	}
 
 //  Listo
@@ -94,7 +119,7 @@ public class ClienteService {
 //  Listo
 	public String loginCliente(String mail, String password) {
 		Optional<Cliente> clienteOptional = repositorio.findById(mail);
-		if (clienteOptional.isPresent()) {
+		if (loginRedis(mail, password) && clienteOptional.isPresent()) {
 			Cliente cliente = clienteOptional.get();
 			if (cliente.getPassword().equals(password)) {
 				return "Login exitoso";
