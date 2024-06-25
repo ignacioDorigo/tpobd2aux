@@ -45,7 +45,7 @@ public class ClienteService {
 		if (clienteOptional.isEmpty()) {
 			Cliente clienteNuevo = new Cliente(documento, nombre, mail, password, direccion);
 			repositorio.save(clienteNuevo);
-			emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Registro en APP",
+			emailSenderService.sendEmail("ferorrego67@gmail.com", "Registro en APP",
 					nombre + " te has registrado exitosamente en la app");
 			return "Registro exitoso";
 		} else {
@@ -86,7 +86,7 @@ public class ClienteService {
 		if (clienteOptional.isPresent()) {
 			Cliente cliente = clienteOptional.get();
 			String contrasenia = cliente.getPassword();
-			emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Recupero contrasenia en APP",
+			emailSenderService.sendEmail("ferorrego67@gmail.com", "Recupero contrasenia en APP",
 					"Tu contrasenia es : " + contrasenia);
 			return "Envio de contrasenia al mail";
 		} else {
@@ -104,7 +104,7 @@ public class ClienteService {
 				if (nueva1.equals(nueva2)) {
 					cliente.setPassword(nueva1);
 					repositorio.save(cliente);
-					emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Cambio contrasenia en APP",
+					emailSenderService.sendEmail("ferorrego67@gmail.com", "Cambio contrasenia en APP",
 							"Has cambiado tu contrasenia, tu nueva contrasenia es: " + nueva1);
 					return "Cambio contrasenia exitoso";
 				} else {
@@ -251,6 +251,12 @@ public class ClienteService {
 			facturas.add(factura);
 			cliente.setFacturas(facturas);
 			repositorio.save(cliente);
+			List<Detalle> detalles = carritoCliente.getDetalles();
+			for (Detalle detalle: detalles) {
+				Producto producto = detalle.getProducto();
+				producto.setStock(producto.getStock() - detalle.getCantidad());
+				productoRepository.save(producto);
+			}
 			vaciarCarrito(mail);
 			return "Carrito Facturado";
 		} else {
