@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.example.demo.modelo.Cliente;
 import com.example.demo.modelo.Detalle;
+import com.example.demo.modelo.Factura;
 import com.example.demo.modelo.Producto;
 import com.example.demo.service.AdminService;
 import com.example.demo.service.ClienteService;
@@ -73,6 +74,12 @@ public class TpomongoredisApplication implements CommandLineRunner {
 //		String nueva1 = "uade";
 //		String nueva2 = "uade";
 //		System.out.println(adminService.cambiarContraseniaAdmin(mail, password, nueva1, nueva2));
+
+//		Ver facturas
+//		List<Factura> facturas = adminService.facturas();
+//		for (Factura factura : facturas) {
+//			System.out.println(factura);
+//		}
 
 // ----------------------------- PRODUCTOS ----------------------------- 
 
@@ -144,23 +151,28 @@ public class TpomongoredisApplication implements CommandLineRunner {
 //		System.out.println(clienteService.agregarProductoCarrito(mail, id, cantidad));
 
 //		Mostrar Carrito
-		String mail = "pedro@gmail.com";
-		List<Detalle> carrito = clienteService.verCarrito(mail);
-		System.out.println(" TU CARRITO  ");
-		for (Detalle detalle : carrito) {
-			System.out.println(detalle.getProducto());
-			System.out.println(detalle.getCantidad());
-		}
+//		String mail = "pedro@gmail.com";
+//		List<Detalle> carrito = clienteService.verCarrito(mail);
+//		System.out.println(" TU CARRITO  ");
+//		for (Detalle detalle : carrito) {
+//			System.out.println(detalle.getProducto());
+//			System.out.println(detalle.getCantidad());
+//		}
 
 //		Vaciar Carrito
 //		String mail = "pedro@gmail.com";
 //		System.out.println(clienteService.vaciarCarrito(mail));
-		
-		
+
 //		Eliminar Producto Carrito
 //		String mail = "pedro@gmail.com";
 //		Integer id = 3;
 //		System.out.println(clienteService.eliminarProductoCarrito(mail, id));
+
+//		Confirmar carrito
+//		String mail = "pedro@gmail.com";
+//		String medioPago = "efectivo";
+//		String condicionFiscal = "Responsable Inscripto";
+//		System.out.println(clienteService.confimarCarrito(mail, medioPago, condicionFiscal));
 
 	}
 

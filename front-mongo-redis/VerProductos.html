@@ -114,7 +114,10 @@
         
          <!-- Enlace para Cliente.html -->
          <a href="Clientes.html?mail=${encodeURIComponent(mail)}" id="clientesLink">Clientes</a>
-          
+         
+        <!-- Enlace para Facturas.html -->
+        <a href="Facturas.html?mail=${encodeURIComponent(mail)}" id="facturasLink">Facturas</a>
+
         <!-- Enlace para Cerrar Sesión -->
         <a href="Index.html" id="cerrarSesionLink">Cerrar Sesión</a>
         
@@ -234,6 +237,14 @@
             event.preventDefault();
             // Redirigir a la página de modificar stock con el parámetro mail
             window.location.href = `Clientes.html?mail=${encodeURIComponent(mail)}`;
+        });
+
+                
+        // Manejar clic en el enlace de Facturas
+         document.getElementById('facturasLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            // Redirigir a la página de modificar stock con el parámetro mail
+            window.location.href = `Facturas.html?mail=${encodeURIComponent(mail)}`;
         });
         
          // Manejar clic en el enlace de cerrar sesión

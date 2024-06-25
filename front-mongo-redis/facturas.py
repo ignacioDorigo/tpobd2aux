@@ -67,43 +67,11 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: .3s ease-in-out;
-        }
-        .card:hover{
-            scale: 1.02;
         }
 
         .card p {
             margin: 5px 0;
         }
-
-        .detalles {
-            margin-top: 10px;
-            padding-left: 20px;
-            display: none; /* Detalles ocultos inicialmente */
-        }
-
-        .detalle-producto{
-            border: 2px solid #ccc;
-            margin-top: 5px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: .3s ease-in-out;
-        }
-
-        .detalle-producto:hover{
-            scale: 1.02;
-        }
-        #botoncito{
-            color: white;
-            background-color: #037bff;
-            width: 10%;
-            padding: 5px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
     </style>
 </head>
 <body>
@@ -149,19 +117,8 @@
                             <p><strong>DNI del Cliente:</strong> ${factura.dniCliente}</p>
                             <p><strong>Medio de Pago:</strong> ${factura.medioPago}</p>
                             <p><strong>Condición Fiscal:</strong> ${factura.condicionFiscal}</p>
-                            <p><strong>Total Factura:</strong> $${factura.total}</p>
+                            <p><strong>Total:</strong> ${factura.total}</p>
                             <p><strong>Fecha:</strong> ${factura.fecha}</p>
-                            <button id="botoncito" onclick="toggleDetalles(this)">Ver Detalles</button>
-                            <div class="detalles">
-                                ${factura.carritoCliente.detalles.map(detalle => `
-                                    <div class="detalle-producto">
-                                        <p><strong>Producto:</strong> ${detalle.producto.nombre}</p>
-                                        <p><strong>Cantidad:</strong> ${detalle.cantidad}</p>
-                                        <p><strong>Precio: $</strong> ${detalle.producto.precio}</p>
-                                        <p><strong>Subtotal: $</strong> ${detalle.producto.precio * detalle.cantidad}</p>
-                                    </div>
-                                `).join('')}
-                            </div>
                         `;
                         facturasContainer.appendChild(card);
                     });
@@ -170,17 +127,6 @@
                     console.error('Error al obtener facturas:', error);
                     alert('Error al obtener facturas. Por favor, inténtelo nuevamente.');
                 });
-        }
-
-        function toggleDetalles(button) {
-            const detalles = button.nextElementSibling;
-            if (detalles.style.display === "none" || detalles.style.display === "") {
-                detalles.style.display = "block";
-                button.textContent = "Ocultar Detalles";
-            } else {
-                detalles.style.display = "none";
-                button.textContent = "Ver Detalles";
-            }
         }
 
         obtenerFacturas();

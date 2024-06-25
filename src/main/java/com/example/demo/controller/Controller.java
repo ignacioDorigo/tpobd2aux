@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.modelo.Admin;
 import com.example.demo.modelo.Cliente;
+import com.example.demo.modelo.Detalle;
+import com.example.demo.modelo.Factura;
 import com.example.demo.modelo.Producto;
 import com.example.demo.service.AdminService;
 import com.example.demo.service.ClienteService;
@@ -135,6 +137,11 @@ public class Controller {
 		}
 	}
 
+	@GetMapping("/verFacturas")
+	public List<Factura> verFacturas() {
+		return adminService.facturas();
+	}
+
 //	------------------------- CLIENTE ----------------
 
 	@PostMapping("/loginCliente")
@@ -158,7 +165,7 @@ public class Controller {
 
 		}
 	}
-	
+
 	@PostMapping("recuperarContraseniaCliente")
 	public ResponseEntity<String> recuperarContraseniaCliente(@RequestParam String mail) {
 		String respuesta = clienteService.recuperarContrasenaCliente(mail);
@@ -168,22 +175,61 @@ public class Controller {
 			return ResponseEntity.status(401).body(respuesta);
 		}
 	}
-	
+
 	@GetMapping("/perfilCliente")
 	public Cliente perfilCliente(@RequestParam String mail) {
 		return clienteService.perfilCliente(mail);
 	}
-	
+
 	@PutMapping("/cambiarContraseniaCliente")
-	public ResponseEntity<String> cambiarContraseniaCliente(String mail, String actual, String nueva1, String nueva2){
+	public ResponseEntity<String> cambiarContraseniaCliente(String mail, String actual, String nueva1, String nueva2) {
 		String respuesta = clienteService.cambiarContraseniaCliente(mail, actual, nueva1, nueva2);
-		if(respuesta.equals("Cambio contrasenia exitoso")) {
+		if (respuesta.equals("Cambio contrasenia exitoso")) {
 			return ResponseEntity.ok(respuesta);
 		} else {
 			return ResponseEntity.status(404).body(respuesta);
 
 		}
-		
 	}
 
+	@GetMapping("/verCarritoCliente")
+	public List<Detalle> verCarritoCliente(@RequestParam String mail) {
+		return clienteService.verCarrito(mail);
+	}
+
+	@PutMapping("/agregarProductoCarrito")
+	public ResponseEntity<String> agregarProductoCarrito(@RequestParam String mail, @RequestParam Integer id,
+			@RequestParam Integer cantidad) {
+		String respuesta = clienteService.agregarProductoCarrito(mail, id, cantidad);
+		if (respuesta.equals("Producto agregado al carrito") || respuesta.equals("Stock modificado al carrito")) {
+			return ResponseEntity.ok(respuesta);
+		} else {
+			return ResponseEntity.status(404).body(respuesta);
+		}
+	}
+
+	@PutMapping("/vaciarCarrito")
+	public ResponseEntity<String> vaciarCarrito(@RequestParam String mail) {
+		String respuesta = clienteService.vaciarCarrito(mail);
+		if (respuesta.equals("Carrito vacio")) {
+			return ResponseEntity.ok(respuesta);
+		} else {
+			return ResponseEntity.status(404).body(respuesta);
+		}
+	}
+
+	@PutMapping("/eliminarProductoCarrito")
+	public ResponseEntity<String> eliminarProductoCarrito(@RequestParam String mail, @RequestParam Integer id) {
+		String respuesta = clienteService.eliminarProductoCarrito(mail, id);
+		if (respuesta.equals("Producto eliminado del carrito")) {
+			return ResponseEntity.ok(respuesta);
+		} else {
+			return ResponseEntity.status(404).body(respuesta);
+		}
+	}
+
+	@GetMapping("/verMisFacturas")
+	public List<Factura> verMisFacturas(@RequestParam String mail) {
+		return clienteService.verMisFacturas(mail);
+	}
 }

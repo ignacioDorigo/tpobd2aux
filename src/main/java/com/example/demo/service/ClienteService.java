@@ -11,8 +11,10 @@ import com.example.demo.modelo.Admin;
 import com.example.demo.modelo.Carrito;
 import com.example.demo.modelo.Cliente;
 import com.example.demo.modelo.Detalle;
+import com.example.demo.modelo.Factura;
 import com.example.demo.modelo.Producto;
 import com.example.demo.repository.ClienteRepository;
+import com.example.demo.repository.FacturaRepository;
 import com.example.demo.repository.ProductoRepository;
 
 @Service
@@ -26,6 +28,9 @@ public class ClienteService {
 
 	@Autowired
 	EmailSenderService emailSenderService;
+
+	@Autowired
+	FacturaRepository facturaRepository;
 
 //	Register
 //	Eliminar Cliente
@@ -221,4 +226,46 @@ public class ClienteService {
 	}
 
 //	Confirmar carrito (Recibimos datos para la facutra, la creamos, y seteamos el carrito)
+
+	public Double totalFacturaCliente(String mail) {
+		Optional<Cliente> clienteOptional = repositorio.findById(mail);
+		if (clienteOptional.isPresent()) {
+			Cliente cliente = clienteOptional.get();
+			Double totalCarrito = cliente.getCarrito().totalCarrito();
+			return totalCarrito;
+		} else {
+			return 0.0;
+		}
+	}
+
+	public String confimarCarrito(String mail, String medioPago, String condicionFiscal) {
+		Optional<Cliente> clienteOptional = repositorio.findById(mail);
+		if (clienteOptional.isPresent()) {
+			Cliente cliente = clienteOptional.get();
+			String nombreCliente = cliente.getNombre();
+			String dniCliente = cliente.getDocumento();
+			Carrito carritoCliente = cliente.getCarrito();
+			Factura factura = new Factura(nombreCliente, dniCliente, medioPago, carritoCliente, condicionFiscal);
+			facturaRepository.save(factura);
+			ArrayList<Factura> facturas = cliente.getFacturas();
+			facturas.add(factura);
+			cliente.setFacturas(facturas);
+			repositorio.save(cliente);
+			vaciarCarrito(mail);
+			return "Carrito Facturado";
+		} else {
+			return "Cliente no encontrado";
+		}
+	}
+
+	public List<Factura> verMisFacturas(String mail) {
+		Optional<Cliente> clienteOptional = repositorio.findById(mail);
+		if (clienteOptional.isPresent()) {
+			Cliente cliente = clienteOptional.get();
+			List<Factura> facturas = cliente.getFacturas();
+			return facturas;
+		} else {
+			return null;
+		}
+	}
 }

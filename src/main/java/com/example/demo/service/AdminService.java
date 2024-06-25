@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.modelo.Admin;
 import com.example.demo.modelo.Cliente;
+import com.example.demo.modelo.Factura;
 import com.example.demo.repository.AdminRepository;
+import com.example.demo.repository.FacturaRepository;
 
 @Service
 public class AdminService {
@@ -17,6 +20,9 @@ public class AdminService {
 
 	@Autowired
 	EmailSenderService emailSenderService;
+
+	@Autowired
+	FacturaRepository facturaRepository;
 
 	public String registerAdmin(String mail, String password, String nombre, String apellido, String documento) {
 		Optional<Admin> adminOptional = repositorio.findById(mail);
@@ -102,6 +108,10 @@ public class AdminService {
 		} else {
 			return "Admin no encontrado";
 		}
+	}
+
+	public List<Factura> facturas() {
+		return facturaRepository.findAll();
 	}
 
 }
