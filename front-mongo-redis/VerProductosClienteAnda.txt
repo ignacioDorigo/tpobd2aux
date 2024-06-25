@@ -75,11 +75,9 @@
             align-items: center;
             transition: .3s ease-in-out;
             cursor: pointer;
-            position: relative; /* Permite posicionar elementos hijos relativamente */
         }
-
-        .producto:hover {
-            transform: scale(1.04); /* Aumenta ligeramente el tamaño al pasar el ratón */
+        .producto:hover{
+            scale: 1.04;
         }
 
         .producto img {
@@ -89,45 +87,50 @@
             border-radius: 5px;
         }
 
-        .boton-eliminar {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: #ff3333;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .boton-eliminar:hover {
-            background-color: #cc0000;
+        #productosList{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
         }
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <!-- Enlaces de la barra lateral -->
-        <a href="PerfilAdmin.html?mail=${encodeURIComponent(mail)}" id="perfilLink">Perfil</a>
-        <a href="CambiarContraseniaAdmin.html?mail=${encodeURIComponent(mail)}" id="cambiarContraseniaLink">Cambiar Contraseña</a>
-        <a href="VerProductos.html?mail=${encodeURIComponent(mail)}" id="verProductosLink">Ver Productos</a>
-        <a href="EliminarProducto.html?mail=${encodeURIComponent(mail)}" id="eliminarProductoLink">Eliminar Producto</a>
-        <a href="AgregarProducto.html?mail=${encodeURIComponent(mail)}" id="agregarProductoLink">Agregar Producto</a>
-        <a href="ModificarPrecio.html?mail=${encodeURIComponent(mail)}" id="modificarPrecioLink">Modificar Precio</a>
-        <a href="ModificarStock.html?mail=${encodeURIComponent(mail)}" id="modificarStockLink">Modificar Stock</a>
-        <a href="Clientes.html?mail=${encodeURIComponent(mail)}" id="clientesLink">Clientes</a>
+        
+         <!-- Enlace para PerfilAdmin.html -->
+         <a href="PerfilAdmin.html?mail=${encodeURIComponent(mail)}" id="perfilLink">Perfil</a>
+        
+         <!-- Enlace para CambiarContraseniaAdmin.html -->
+         <a href="CambiarContraseniaAdmin.html?mail=${encodeURIComponent(mail)}" id="cambiarContraseniaLink">Cambiar Contraseña</a>
+         
+         <!-- Enlace para VerProductos.html -->
+         <a href="VerProductos.html?mail=${encodeURIComponent(mail)}" id="verProductosLink">Ver Productos</a>
+         
+         <!-- Enlace para EliminarProducto.html -->
+         <a href="EliminarProducto.html?mail=${encodeURIComponent(mail)}" id="eliminarProductoLink">Eliminar Producto</a>
+         
+           <!-- Enlace para AgregarProducto.html -->
+         <a href="AgregarProducto.html?mail=${encodeURIComponent(mail)}" id="agregarProductoLink">Agregar Producto</a>
+         
+         <!-- Enlace para ModificarPrecio.html -->
+         <a href="ModificarPrecio.html?mail=${encodeURIComponent(mail)}" id="modificarPrecioLink">Modificar Precio</a>
+ 
+          <!-- Enlace para ModificarStock.html -->
+         <a href="ModificarStock.html?mail=${encodeURIComponent(mail)}" id="modificarStockLink">Modificar Stock</a>
+        
+         <!-- Enlace para Cliente.html -->
+         <a href="Clientes.html?mail=${encodeURIComponent(mail)}" id="clientesLink">Clientes</a>
+         
+        <!-- Enlace para Facturas.html -->
         <a href="Facturas.html?mail=${encodeURIComponent(mail)}" id="facturasLink">Facturas</a>
+
+        <!-- Enlace para Cerrar Sesión -->
         <a href="Index.html" id="cerrarSesionLink">Cerrar Sesión</a>
+        
     </div>
 
     <div class="content">
         <h2>Listado de Productos</h2>
+        
         <div id="productosList"></div>
     </div>
 
@@ -135,7 +138,7 @@
         // Obtener el parámetro 'mail' de la URL
         const urlParams = new URLSearchParams(window.location.search);
         const mail = urlParams.get('mail');
-        console.log("email: ", mail);
+        console.log("email: ",mail);
 
         // Función para obtener y mostrar los productos
         function obtenerProductos() {
@@ -147,6 +150,7 @@
                     return response.json();
                 })
                 .then(data => {
+                    // Construir la lista de productos
                     const productosList = document.getElementById('productosList');
                     productosList.innerHTML = ''; // Limpiar contenido anterior
 
@@ -175,19 +179,6 @@
                         stock.textContent = `Stock disponible: ${producto.stock}`;
                         productoDiv.appendChild(stock);
 
-                        const botonEliminar = document.createElement('button');
-                        botonEliminar.textContent = 'X';
-                        botonEliminar.classList.add('boton-eliminar');
-
-                        // Manejar clic en el botón de eliminar
-                        botonEliminar.addEventListener('click', function(event) {
-                            event.stopPropagation(); // Detener la propagación del evento
-                            eliminarProducto(producto.id);
-                            botonEliminar.disabled = true; // Deshabilitar el botón después de hacer clic
-                        });
-
-                        productoDiv.appendChild(botonEliminar);
-
                         productosList.appendChild(productoDiv);
                     });
                 })
@@ -195,24 +186,6 @@
                     console.error('Error al obtener productos:', error);
                     alert('Error al obtener productos. Por favor, inténtelo nuevamente.');
                 });
-        }
-
-        // Función para eliminar un producto
-        function eliminarProducto(idProducto) {
-            fetch(`http://localhost:8080/tpo/eliminarProducto?id=${idProducto}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al eliminar el producto');
-                }
-                console.log('Producto eliminado exitosamente');
-                obtenerProductos(); // Volver a cargar la lista de productos después de eliminar uno
-            })
-            .catch(error => {
-                console.error('Error al intentar eliminar el producto:', error);
-                alert('Error al eliminar el producto. Por favor, inténtelo nuevamente.');
-            });
         }
 
         // Llamar a la función para obtener los productos al cargar la página
@@ -245,7 +218,6 @@
             // Redirigir a la página de eliminar producto con el parámetro mail
             window.location.href = `EliminarProducto.html?mail=${encodeURIComponent(mail)}`;
         });
-
         // Manejar clic en el enlace de agregar producto
         document.getElementById('agregarProductoLink').addEventListener('click', function(event) {
             event.preventDefault();
@@ -253,40 +225,40 @@
             window.location.href = `AgregarProducto.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de modificar precio
         document.getElementById('modificarPrecioLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de modificar precio con el parámetro mail
+            // Redirigir a la página de agregar producto con el parámetro mail
             window.location.href = `ModificarPrecio.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de modificar stock
         document.getElementById('modificarStockLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de modificar stock con el parámetro mail
+            // Redirigir a la página de agregar producto con el parámetro mail
             window.location.href = `ModificarStock.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de clientes
+        // Manejar clic en el enlace de Clientes
         document.getElementById('clientesLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de clientes con el parámetro mail
+            // Redirigir a la página de modificar stock con el parámetro mail
             window.location.href = `Clientes.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de facturas
-        document.getElementById('facturasLink').addEventListener('click', function(event) {
+                
+        // Manejar clic en el enlace de Facturas
+         document.getElementById('facturasLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de facturas con el parámetro mail
+            // Redirigir a la página de modificar stock con el parámetro mail
             window.location.href = `Facturas.html?mail=${encodeURIComponent(mail)}`;
         });
-
-        // Manejar clic en el enlace de cerrar sesión
-        document.getElementById('cerrarSesionLink').addEventListener('click', function(event) {
+        
+         // Manejar clic en el enlace de cerrar sesión
+         document.getElementById('cerrarSesionLink').addEventListener('click', function(event) {
             event.preventDefault();
             // Redirigir a la página de inicio de sesión (Index.html)
             window.location.href = `Index.html`;
         });
+        
     </script>
 </body>
 </html>

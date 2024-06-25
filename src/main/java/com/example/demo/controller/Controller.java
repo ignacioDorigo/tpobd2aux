@@ -228,8 +228,20 @@ public class Controller {
 		}
 	}
 
+// Listo
 	@GetMapping("/verMisFacturas")
 	public List<Factura> verMisFacturas(@RequestParam String mail) {
 		return clienteService.verMisFacturas(mail);
+	}
+
+	@PostMapping("/confirmarCarrito")
+	public ResponseEntity<String> confirmarCarrito(@RequestParam String mail, @RequestParam String medioPago,
+			@RequestParam String condicionFiscal) {
+		String respuesta = clienteService.confimarCarrito(mail, medioPago, condicionFiscal);
+		if (respuesta.equals("Carrito Facturado")) {
+			return ResponseEntity.ok(respuesta);
+		} else {
+			return ResponseEntity.status(404).body(respuesta);
+		}
 	}
 }
