@@ -96,7 +96,7 @@ public class ClienteService {
 		if (clienteOptional.isEmpty()) {
 			Cliente clienteNuevo = new Cliente(documento, nombre, mail, password, direccion);
 			repositorio.save(clienteNuevo);
-			emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Registro en APP",
+			emailSenderService.sendEmail("ferorrego67@gmail.com", "Registro en APP",
 					nombre + " te has registrado exitosamente en la app");
 			guardarEnRedis(clienteNuevo);
 			return "Registro exitoso";
@@ -138,7 +138,7 @@ public class ClienteService {
 		if (clienteOptional.isPresent()) {
 			Cliente cliente = clienteOptional.get();
 			String contrasenia = cliente.getPassword();
-			emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Recupero contrasenia en APP",
+			emailSenderService.sendEmail("ferorrego67@gmail.com", "Recupero contrasenia en APP",
 					"Tu contrasenia es : " + contrasenia);
 			return "Envio de contrasenia al mail";
 		} else {
@@ -156,7 +156,7 @@ public class ClienteService {
 				if (nueva1.equals(nueva2)) {
 					cliente.setPassword(nueva1);
 					repositorio.save(cliente);
-					emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Cambio contrasenia en APP",
+					emailSenderService.sendEmail("ferorrego67@gmail.com", "Cambio contrasenia en APP",
 							"Has cambiado tu contrasenia, tu nueva contrasenia es: " + nueva1);
 					guardarEnRedis(cliente);
 					return "Cambio contrasenia exitoso";
@@ -278,6 +278,37 @@ public class ClienteService {
 		}
 	}
 
+// Actualizar Cantidad Carrito
+	public String actualizarCantidadCarrito(String mail, Integer id, Integer cantidad) {
+		Optional<Cliente> clienteOptional = repositorio.findById(mail);
+		if (clienteOptional.isPresent()) {
+			Cliente cliente = clienteOptional.get();
+			Optional<Producto> productoOptional = productoRepository.findById(id);
+//			Validamos que exista el producto
+			if (productoOptional.isPresent()) {
+				Producto p = productoOptional.get();
+				Carrito carritoCliente = cliente.getCarrito();
+//				Si esto devuelve true es porque encontro el producto en el carrito
+				if (carritoCliente.productoEnCarrito(p)) {
+
+//					Modificamos la cantidad
+					carritoCliente.actualizarCantidadCarrito(p, cantidad);
+					cliente.setCarrito(carritoCliente);
+					repositorio.save(cliente);
+					return "Cantidad actualizada al carrito";
+
+				} else {
+					return "Producto no encontrado";
+				}
+
+			} else {
+				return "El ID del Producto no existe";
+			}
+		} else {
+			return "El cliente no existe";
+		}
+	}
+	
 //	Confirmar carrito (Recibimos datos para la facutra, la creamos, y seteamos el carrito)
 
 	public Double totalFacturaCliente(String mail) {

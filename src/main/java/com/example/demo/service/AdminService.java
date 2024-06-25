@@ -85,7 +85,7 @@ public class AdminService {
 		if (adminOptional.isEmpty()) {
 			Admin nuevo = new Admin(mail, password, nombre, apellido, documento);
 			repositorio.save(nuevo);
-			emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Registro en APP",
+			emailSenderService.sendEmail("ferorrego67@gmail.com", "Registro en APP",
 					"Te has registrado exitosamente en la app");
 			guardarEnRedis(nuevo);
 			return "Register Exitoso";
@@ -124,7 +124,7 @@ public class AdminService {
 		if (adminOptional.isPresent()) {
 			Admin admin = adminOptional.get();
 			String contrasenia = admin.getPassword();
-			emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Recupero contrasenia en APP",
+			emailSenderService.sendEmail("ferorrego67@gmail.com", "Recupero contrasenia en APP",
 					"Tu contrasenia es : " + contrasenia);
 			return "Envio de contrasenia al mail";
 		} else {
@@ -151,7 +151,7 @@ public class AdminService {
 				if (nueva1.equals(nueva2)) {
 					admin.setPassword(nueva1);
 					repositorio.save(admin);
-					emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Cambio contrasenia en APP",
+					emailSenderService.sendEmail("ferorrego67@gmail.com", "Cambio contrasenia en APP",
 							"Has cambiado tu contrasenia, tu nueva contrasenia es: " + nueva1);
 					guardarEnRedis(admin);
 					return "Cambio contrasenia exitoso";
