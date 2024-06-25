@@ -101,35 +101,14 @@
 <body>
     <div class="sidebar">
         
-         <!-- Enlace para PerfilAdmin.html -->
-         <a href="PerfilAdmin.html?mail=${encodeURIComponent(mail)}" id="perfilLink">Perfil</a>
-        
-         <!-- Enlace para CambiarContraseniaAdmin.html -->
-         <a href="CambiarContraseniaAdmin.html?mail=${encodeURIComponent(mail)}" id="cambiarContraseniaLink">Cambiar Contraseña</a>
-         
-         <!-- Enlace para VerProductos.html -->
-         <a href="VerProductos.html?mail=${encodeURIComponent(mail)}" id="verProductosLink">Ver Productos</a>
-         
-         <!-- Enlace para EliminarProducto.html -->
-         <a href="EliminarProducto.html?mail=${encodeURIComponent(mail)}" id="eliminarProductoLink">Eliminar Producto</a>
-         
-           <!-- Enlace para AgregarProducto.html -->
-         <a href="AgregarProducto.html?mail=${encodeURIComponent(mail)}" id="agregarProductoLink">Agregar Producto</a>
-         
-         <!-- Enlace para ModificarPrecio.html -->
-         <a href="ModificarPrecio.html?mail=${encodeURIComponent(mail)}" id="modificarPrecioLink">Modificar Precio</a>
- 
-          <!-- Enlace para ModificarStock.html -->
-         <a href="ModificarStock.html?mail=${encodeURIComponent(mail)}" id="modificarStockLink">Modificar Stock</a>
-         
-         <!-- Enlace para Cliente.html -->
-         <a href="Clientes.html?mail=${encodeURIComponent(mail)}" id="clientesLink">Clientes</a> 
-         
-          <!-- Enlace para Facturas.html -->
-          <a href="Facturas.html?mail=${encodeURIComponent(mail)}" id="facturasLink">Facturas</a>
-
-          <!-- Enlace para Cerrar Sesión -->
+        <a href="PerfilAdmin.html?mail=${encodeURIComponent(mail)}" id="perfilLink">Perfil</a>
+        <a href="CambiarContraseniaAdmin.html?mail=${encodeURIComponent(mail)}" id="cambiarContraseniaLink">Cambiar Contraseña</a>
+        <a href="VerProductos.html?mail=${encodeURIComponent(mail)}" id="verProductosLink">Ver Productos</a>
+        <a href="AgregarProducto.html?mail=${encodeURIComponent(mail)}" id="agregarProductoLink">Agregar Producto</a>
+        <a href="Clientes.html?mail=${encodeURIComponent(mail)}" id="clientesLink">Clientes</a>
+        <a href="Facturas.html?mail=${encodeURIComponent(mail)}" id="facturasLink">Facturas</a>
         <a href="Index.html" id="cerrarSesionLink">Cerrar Sesión</a>
+
     </div>
 
     <div class="content">
@@ -190,72 +169,41 @@
                 });
         });
 
-        // Manejar clic en el enlace de perfil
         document.getElementById('perfilLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de perfil admin con el parámetro mail
             window.location.href = `PerfilAdmin.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de cambiar contraseña
         document.getElementById('cambiarContraseniaLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de cambiar contraseña con el parámetro mail
             window.location.href = `CambiarContraseniaAdmin.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de ver productos
         document.getElementById('verProductosLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de ver productos con el parámetro mail
             window.location.href = `VerProductos.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de eliminar producto
-        document.getElementById('eliminarProductoLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            // Redirigir a la página de eliminar producto con el parámetro mail
-            window.location.href = `EliminarProducto.html?mail=${encodeURIComponent(mail)}`;
-        });
-        // Manejar clic en el enlace de agregar producto
         document.getElementById('agregarProductoLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de agregar producto con el parámetro mail
             window.location.href = `AgregarProducto.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        document.getElementById('modificarPrecioLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            // Redirigir a la página de agregar producto con el parámetro mail
-            window.location.href = `ModificarPrecio.html?mail=${encodeURIComponent(mail)}`;
-        });
-
-        document.getElementById('modificarStockLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            // Redirigir a la página de agregar producto con el parámetro mail
-            window.location.href = `ModificarStock.html?mail=${encodeURIComponent(mail)}`;
-        });
-
-        // Manejar clic en el enlace de Clientes
         document.getElementById('clientesLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de modificar stock con el parámetro mail
             window.location.href = `Clientes.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de Facturas
-         document.getElementById('facturasLink').addEventListener('click', function(event) {
+        document.getElementById('facturasLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de modificar stock con el parámetro mail
             window.location.href = `Facturas.html?mail=${encodeURIComponent(mail)}`;
         });
 
-         // Manejar clic en el enlace de cerrar sesión
-         document.getElementById('cerrarSesionLink').addEventListener('click', function(event) {
+        document.getElementById('cerrarSesionLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de inicio de sesión (Index.html)
             window.location.href = `Index.html`;
         });
+        
     </script>
 </body>
 </html>

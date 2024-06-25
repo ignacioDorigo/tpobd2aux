@@ -111,10 +111,7 @@
         <a href="PerfilAdmin.html?mail=${encodeURIComponent(mail)}" id="perfilLink">Perfil</a>
         <a href="CambiarContraseniaAdmin.html?mail=${encodeURIComponent(mail)}" id="cambiarContraseniaLink">Cambiar Contraseña</a>
         <a href="VerProductos.html?mail=${encodeURIComponent(mail)}" id="verProductosLink">Ver Productos</a>
-        <a href="EliminarProducto.html?mail=${encodeURIComponent(mail)}" id="eliminarProductoLink">Eliminar Producto</a>
         <a href="AgregarProducto.html?mail=${encodeURIComponent(mail)}" id="agregarProductoLink">Agregar Producto</a>
-        <a href="ModificarPrecio.html?mail=${encodeURIComponent(mail)}" id="modificarPrecioLink">Modificar Precio</a>
-        <a href="ModificarStock.html?mail=${encodeURIComponent(mail)}" id="modificarStockLink">Modificar Stock</a>
         <a href="Clientes.html?mail=${encodeURIComponent(mail)}" id="clientesLink">Clientes</a>
         <a href="Facturas.html?mail=${encodeURIComponent(mail)}" id="facturasLink">Facturas</a>
         <a href="Index.html" id="cerrarSesionLink">Cerrar Sesión</a>
@@ -200,24 +197,9 @@
             window.location.href = `VerProductos.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        document.getElementById('eliminarProductoLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            window.location.href = `EliminarProducto.html?mail=${encodeURIComponent(mail)}`;
-        });
-
         document.getElementById('agregarProductoLink').addEventListener('click', function(event) {
             event.preventDefault();
             window.location.href = `AgregarProducto.html?mail=${encodeURIComponent(mail)}`;
-        });
-
-        document.getElementById('modificarPrecioLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            window.location.href = `ModificarPrecio.html?mail=${encodeURIComponent(mail)}`;
-        });
-
-        document.getElementById('modificarStockLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            window.location.href = `ModificarStock.html?mail=${encodeURIComponent(mail)}`;
         });
 
         document.getElementById('clientesLink').addEventListener('click', function(event) {

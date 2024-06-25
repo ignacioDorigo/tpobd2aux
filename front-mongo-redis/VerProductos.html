@@ -109,6 +109,40 @@
         .boton-eliminar:hover {
             background-color: #cc0000;
         }
+
+        .boton-editar-stock {
+            background-color: #4CAF50; /* Color de fondo */
+            color: white; /* Color del texto */
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .boton-editar-stock:hover {
+            background-color: #45a049; /* Cambio de color al pasar el ratón */
+        }
+
+        .boton-actualizar-precio {
+            background-color: #f39c12; /* Color de fondo */
+            color: white; /* Color del texto */
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .boton-actualizar-precio:hover {
+            background-color: #e67e22; /* Cambio de color al pasar el ratón */
+        }
+        #productosList{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
     </style>
 </head>
 <body>
@@ -117,12 +151,9 @@
         <a href="PerfilAdmin.html?mail=${encodeURIComponent(mail)}" id="perfilLink">Perfil</a>
         <a href="CambiarContraseniaAdmin.html?mail=${encodeURIComponent(mail)}" id="cambiarContraseniaLink">Cambiar Contraseña</a>
         <a href="VerProductos.html?mail=${encodeURIComponent(mail)}" id="verProductosLink">Ver Productos</a>
-        <a href="EliminarProducto.html?mail=${encodeURIComponent(mail)}" id="eliminarProductoLink">Eliminar Producto</a>
         <a href="AgregarProducto.html?mail=${encodeURIComponent(mail)}" id="agregarProductoLink">Agregar Producto</a>
-        <a href="ModificarPrecio.html?mail=${encodeURIComponent(mail)}" id="modificarPrecioLink">Modificar Precio</a>
-        <a href="ModificarStock.html?mail=${encodeURIComponent(mail)}" id="modificarStockLink">Modificar Stock</a>
         <a href="Clientes.html?mail=${encodeURIComponent(mail)}" id="clientesLink">Clientes</a>
-        <a href="Facturas.html?mail=${encodeURIComponent(mail)}" id="facturasLink">Facturas</a>
+         <a href="Facturas.html?mail=${encodeURIComponent(mail)}" id="facturasLink">Facturas</a>
         <a href="Index.html" id="cerrarSesionLink">Cerrar Sesión</a>
     </div>
 
@@ -188,6 +219,40 @@
 
                         productoDiv.appendChild(botonEliminar);
 
+                        const botonEditarStock = document.createElement('button');
+                        botonEditarStock.textContent = 'Editar Stock';
+                        botonEditarStock.classList.add('boton-editar-stock');
+
+                        // Manejar clic en el botón de editar stock
+                        botonEditarStock.addEventListener('click', function(event) {
+                            event.stopPropagation(); // Detener la propagación del evento
+
+                            // Prompt para ingresar nuevo stock
+                            const nuevoStock = prompt('Ingrese el nuevo stock:');
+                            if (nuevoStock !== null) {
+                                actualizarStock(producto.id, nuevoStock);
+                            }
+                        });
+
+                        productoDiv.appendChild(botonEditarStock);
+
+                        const botonActualizarPrecio = document.createElement('button');
+                        botonActualizarPrecio.textContent = 'Actualizar Precio';
+                        botonActualizarPrecio.classList.add('boton-actualizar-precio');
+
+                        // Manejar clic en el botón de actualizar precio
+                        botonActualizarPrecio.addEventListener('click', function(event) {
+                            event.stopPropagation(); // Detener la propagación del evento
+
+                            // Prompt para ingresar nuevo precio
+                            const nuevoPrecio = prompt('Ingrese el nuevo precio:');
+                            if (nuevoPrecio !== null) {
+                                actualizarPrecio(producto.id, nuevoPrecio);
+                            }
+                        });
+
+                        productoDiv.appendChild(botonActualizarPrecio);
+
                         productosList.appendChild(productoDiv);
                     });
                 })
@@ -215,76 +280,77 @@
             });
         }
 
+        // Función para actualizar el stock del producto
+        function actualizarStock(idProducto, nuevoStock) {
+            fetch(`http://localhost:8080/tpo/actualizarStock?id=${idProducto}&stockNuevo=${nuevoStock}`, {
+                method: 'PUT'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al actualizar el stock');
+                }
+                console.log('Stock actualizado exitosamente');
+                obtenerProductos(); // Volver a cargar la lista de productos después de actualizar el stock
+            })
+            .catch(error => {
+                console.error('Error al intentar actualizar el stock:', error);
+                alert('Error al actualizar el stock. Por favor, inténtelo nuevamente.');
+            });
+        }
+
+        // Función para actualizar el precio del producto
+        function actualizarPrecio(idProducto, nuevoPrecio) {
+            fetch(`http://localhost:8080/tpo/actualizarPrecio?id=${idProducto}&precioNuevo=${nuevoPrecio}`, {
+                method: 'PUT'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al actualizar el precio');
+                }
+                console.log('Precio actualizado exitosamente');
+                obtenerProductos(); // Volver a cargar la lista de productos después de actualizar el precio
+            })
+            .catch(error => {
+                console.error('Error al intentar actualizar el precio:', error);
+                alert('Error al actualizar el precio. Por favor, inténtelo nuevamente.');
+            });
+        }
+
         // Llamar a la función para obtener los productos al cargar la página
         obtenerProductos();
 
-        // Manejar clic en el enlace de perfil
         document.getElementById('perfilLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de perfil admin con el parámetro mail
             window.location.href = `PerfilAdmin.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de cambiar contraseña
         document.getElementById('cambiarContraseniaLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de cambiar contraseña con el parámetro mail
             window.location.href = `CambiarContraseniaAdmin.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de ver productos
         document.getElementById('verProductosLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de ver productos con el parámetro mail
             window.location.href = `VerProductos.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de eliminar producto
-        document.getElementById('eliminarProductoLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            // Redirigir a la página de eliminar producto con el parámetro mail
-            window.location.href = `EliminarProducto.html?mail=${encodeURIComponent(mail)}`;
-        });
-
-        // Manejar clic en el enlace de agregar producto
         document.getElementById('agregarProductoLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de agregar producto con el parámetro mail
             window.location.href = `AgregarProducto.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de modificar precio
-        document.getElementById('modificarPrecioLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            // Redirigir a la página de modificar precio con el parámetro mail
-            window.location.href = `ModificarPrecio.html?mail=${encodeURIComponent(mail)}`;
-        });
-
-        // Manejar clic en el enlace de modificar stock
-        document.getElementById('modificarStockLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            // Redirigir a la página de modificar stock con el parámetro mail
-            window.location.href = `ModificarStock.html?mail=${encodeURIComponent(mail)}`;
-        });
-
-        // Manejar clic en el enlace de clientes
         document.getElementById('clientesLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de clientes con el parámetro mail
             window.location.href = `Clientes.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de facturas
         document.getElementById('facturasLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de facturas con el parámetro mail
             window.location.href = `Facturas.html?mail=${encodeURIComponent(mail)}`;
         });
 
-        // Manejar clic en el enlace de cerrar sesión
         document.getElementById('cerrarSesionLink').addEventListener('click', function(event) {
             event.preventDefault();
-            // Redirigir a la página de inicio de sesión (Index.html)
             window.location.href = `Index.html`;
         });
     </script>
