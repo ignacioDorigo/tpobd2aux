@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.modelo.Admin;
@@ -39,6 +42,29 @@ public class ClienteService {
 //	Cambiar Contrasenia
 //	Todos clientes
 
+	public void guardarEnRedis(Cliente cliente) {
+		// Crear una fábrica de conexiones Lettuce
+		LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory();
+		connectionFactory.afterPropertiesSet(); // Inicializa la fábrica de conexiones
+
+		// Crear una plantilla de Redis (clave , valor)
+		RedisTemplate<String, String> template = new RedisTemplate<>();
+		template.setConnectionFactory(connectionFactory); // Configura la plantilla con la fábrica de conexiones
+		template.setDefaultSerializer(StringRedisSerializer.UTF_8); // Establece el serializador para las claves y //
+																	// valores
+		template.afterPropertiesSet(); // Inicializa la plantilla de Redis
+
+		String mailAdmin = cliente.getMail();
+		String password = cliente.getPassword();
+//      Guardamos el objeto (clave , valor)
+		template.opsForValue().set(mailAdmin, password);
+////      Mostrar objeto guardado
+//		System.out.println(template.opsForValue().get("pedro@gmail.com"));
+		// Cerrar la fábrica de conexiones
+		connectionFactory.destroy();
+		System.out.println("Guardado en Redis");
+	}
+
 //  Listo
 	public String registerCliente(String documento, String nombre, String mail, String password, String direccion) {
 		Optional<Cliente> clienteOptional = repositorio.findById(mail);
@@ -47,6 +73,7 @@ public class ClienteService {
 			repositorio.save(clienteNuevo);
 			emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Registro en APP",
 					nombre + " te has registrado exitosamente en la app");
+			guardarEnRedis(clienteNuevo);
 			return "Registro exitoso";
 		} else {
 			return "Ese mail ya esta registrado";
@@ -106,6 +133,7 @@ public class ClienteService {
 					repositorio.save(cliente);
 					emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Cambio contrasenia en APP",
 							"Has cambiado tu contrasenia, tu nueva contrasenia es: " + nueva1);
+					guardarEnRedis(cliente);
 					return "Cambio contrasenia exitoso";
 				} else {
 					return "Las contrasenias no coinciden";
@@ -251,6 +279,12 @@ public class ClienteService {
 			facturas.add(factura);
 			cliente.setFacturas(facturas);
 			repositorio.save(cliente);
+			List<Detalle> detalles = carritoCliente.getDetalles();
+			for (Detalle detalle : detalles) {
+				Producto producto = detalle.getProducto();
+				producto.setStock(producto.getStock() - detalle.getCantidad());
+				productoRepository.save(producto);
+			}
 			vaciarCarrito(mail);
 			return "Carrito Facturado";
 		} else {

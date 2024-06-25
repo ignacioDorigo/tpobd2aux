@@ -3,9 +3,15 @@ package com.example.demo.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.TpomongoredisApplication;
 import com.example.demo.modelo.Admin;
 import com.example.demo.modelo.Cliente;
 import com.example.demo.modelo.Factura;
@@ -24,6 +30,29 @@ public class AdminService {
 	@Autowired
 	FacturaRepository facturaRepository;
 
+	public void guardarEnRedis(Admin admin) {
+		// Crear una fábrica de conexiones Lettuce
+		LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory();
+		connectionFactory.afterPropertiesSet(); // Inicializa la fábrica de conexiones
+
+		// Crear una plantilla de Redis (clave , valor)
+		RedisTemplate<String, String> template = new RedisTemplate<>();
+		template.setConnectionFactory(connectionFactory); // Configura la plantilla con la fábrica de conexiones
+		template.setDefaultSerializer(StringRedisSerializer.UTF_8); // Establece el serializador para las claves y //
+																	// valores
+		template.afterPropertiesSet(); // Inicializa la plantilla de Redis
+
+		String mailAdmin = admin.getMail();
+		String password = admin.getPassword();
+//      Guardamos el objeto (clave , valor)
+		template.opsForValue().set(mailAdmin, password);
+////      Mostrar objeto guardado
+//		System.out.println(template.opsForValue().get("pedro@gmail.com"));
+		// Cerrar la fábrica de conexiones
+		connectionFactory.destroy();
+		System.out.println("Guardado en Redis");
+	}
+
 	public String registerAdmin(String mail, String password, String nombre, String apellido, String documento) {
 		Optional<Admin> adminOptional = repositorio.findById(mail);
 		if (adminOptional.isEmpty()) {
@@ -31,6 +60,7 @@ public class AdminService {
 			repositorio.save(nuevo);
 			emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Registro en APP",
 					"Te has registrado exitosamente en la app");
+			guardarEnRedis(nuevo);
 			return "Register Exitoso";
 		} else {
 			return "Ya existe ese mail";
@@ -96,6 +126,7 @@ public class AdminService {
 					repositorio.save(admin);
 					emailSenderService.sendEmail("ignaciodorigo@gmail.com", "Cambio contrasenia en APP",
 							"Has cambiado tu contrasenia, tu nueva contrasenia es: " + nueva1);
+					guardarEnRedis(admin);
 					return "Cambio contrasenia exitoso";
 
 				} else {
