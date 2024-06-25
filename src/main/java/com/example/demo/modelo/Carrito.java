@@ -66,7 +66,17 @@ public class Carrito {
 			}
 		}
 	}
-
+	
+	public void actualizarCantidadCarrito(Producto p, Integer cantidad) {
+		for (Detalle detalle : detalles) {
+			Producto producDetalle = detalle.getProducto();
+			if (producDetalle.getId() == p.getId()) {
+				detalle.setCantidad(cantidad);
+				System.out.println("Cantidad modificada");
+			}
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return "Carrito [detalles=" + detalles + "]";

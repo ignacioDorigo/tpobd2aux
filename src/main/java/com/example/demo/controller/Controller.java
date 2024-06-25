@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,8 +25,11 @@ import com.example.demo.service.ProductoService;
 
 @RestController
 @RequestMapping("/tpo")
-public class Controller {
 
+
+
+public class Controller {
+	private static final Logger logger = LoggerFactory.getLogger(Controller.class);
 	@Autowired
 	AdminService adminService;
 
@@ -217,7 +222,19 @@ public class Controller {
 			return ResponseEntity.status(404).body(respuesta);
 		}
 	}
-
+	
+	@PutMapping("/actualizarCantidadProducto")
+	public ResponseEntity<String> actualizarCantidadProducto (@RequestParam String mail, @RequestParam Integer id,  @RequestParam  Integer cantidad) {
+	    try {
+	        String respuesta = clienteService.actualizarCantidadCarrito(mail, id, cantidad);
+	        return ResponseEntity.ok(respuesta);
+	    } catch (Exception e) {
+	        // Log the exception
+	        logger.error("Error al actualizar la cantidad del producto", e);
+	        return ResponseEntity.status(500).body("Error interno del servidor: " + e.getMessage());
+	    }
+	}
+	
 	@PutMapping("/eliminarProductoCarrito")
 	public ResponseEntity<String> eliminarProductoCarrito(@RequestParam String mail, @RequestParam Integer id) {
 		String respuesta = clienteService.eliminarProductoCarrito(mail, id);

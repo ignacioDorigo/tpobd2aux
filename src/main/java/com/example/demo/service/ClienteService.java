@@ -225,6 +225,37 @@ public class ClienteService {
 		}
 	}
 
+// Actualizar Cantidad Carrito
+	public String actualizarCantidadCarrito(String mail, Integer id, Integer cantidad) {
+		Optional<Cliente> clienteOptional = repositorio.findById(mail);
+		if (clienteOptional.isPresent()) {
+			Cliente cliente = clienteOptional.get();
+			Optional<Producto> productoOptional = productoRepository.findById(id);
+//			Validamos que exista el producto
+			if (productoOptional.isPresent()) {
+				Producto p = productoOptional.get();
+				Carrito carritoCliente = cliente.getCarrito();
+//				Si esto devuelve true es porque encontro el producto en el carrito
+				if (carritoCliente.productoEnCarrito(p)) {
+
+//					Modificamos la cantidad
+					carritoCliente.actualizarCantidadCarrito(p, cantidad);
+					cliente.setCarrito(carritoCliente);
+					repositorio.save(cliente);
+					return "Cantidad actualizada al carrito";
+
+				} else {
+					return "Producto no encontrado";
+				}
+
+			} else {
+				return "El ID del Producto no existe";
+			}
+		} else {
+			return "El cliente no existe";
+		}
+	}
+	
 //	Confirmar carrito (Recibimos datos para la facutra, la creamos, y seteamos el carrito)
 
 	public Double totalFacturaCliente(String mail) {

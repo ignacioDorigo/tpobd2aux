@@ -115,7 +115,22 @@
             background-color: darkred;
 
         }
+        .actualizar-boton{
+            position: absolute;
+            top: 10px;
+            right: 100px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
 
+        .actualizar-boton:hover {
+            background-color: #0056b3;
+        }
+        
         .eliminar-boton {
             position: absolute;
             top: 10px;
@@ -271,10 +286,11 @@
                             card.className = 'card';
                             card.innerHTML = `
                                 <p><strong>Producto:</strong> ${detalle.producto.nombre}</p>
-                                <p><strong>Cantidad:</strong> ${detalle.cantidad}</p>
+                                <p><strong>Cantidad:</strong> <input type="number" value="${detalle.cantidad}" id="cantidad-${detalle.producto.id}" min="1" style="width: 35px;"></p>
                                 <p><strong>Precio:</strong> $${detalle.producto.precio}</p>
                                 <p><strong>Subtotal:</strong> $${detalle.producto.precio * detalle.cantidad}</p>
                                 <img src="${detalle.producto.imagen}" alt="${detalle.producto.nombre}" style="width: 100px; height: auto;">
+                                <button class="actualizar-boton" onclick="actualizarCantidad(${detalle.producto.id})">Actualizar</button>
                                 <button class="eliminar-boton" onclick="eliminarProducto(${detalle.producto.id})">X</button>
                             `;
                             carritoContainer.appendChild(card);
@@ -286,7 +302,30 @@
                 .catch(error => {
                     console.error('Error al obtener el carrito:', error);
                     alert('Error al obtener el carrito. Por favor, inténtelo nuevamente.');
-                });
+                }
+            );
+        }
+
+        function actualizarCantidad(idProducto) {
+            const nuevaCantidad = document.getElementById(`cantidad-${idProducto}`).value;
+            
+            fetch(`http://localhost:8080/tpo/actualizarCantidadProducto?mail=${encodeURIComponent(mail)}&id=${idProducto}&cantidad=${nuevaCantidad}`, {
+                method: 'PUT'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.text();
+            })
+            .then(data => {
+                alert(data);
+                obtenerCarrito(); // Volver a cargar el carrito para reflejar los cambios
+            })
+            .catch(error => {
+                console.error('Error al actualizar la cantidad:', error);
+                alert('Error al actualizar la cantidad: ' + error.message);
+            });
         }
 
         function eliminarProducto(idProducto) {
