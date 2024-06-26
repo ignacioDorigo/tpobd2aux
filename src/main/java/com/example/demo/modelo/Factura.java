@@ -12,6 +12,7 @@ public class Factura {
 
 	private Integer numeroFactura;
 	private String nombreCliente;
+	private String apellidoCliente;
 	private String dniCliente;
 	private String medioPago;
 	private Carrito carritoCliente;
@@ -19,13 +20,14 @@ public class Factura {
 	private Double total;
 	private LocalDateTime fecha;
 
-	public Factura(String nombreCliente, String dniCliente, String medioPago, Carrito carritoCliente,
+	public Factura(String nombreCliente, String apellidoCliente, String dniCliente, String medioPago, Carrito carritoCliente,
 			String condicionFiscal) {
 
 		Random random = new Random();
 		Integer numeroFact = random.nextInt(10000);
 		this.numeroFactura = numeroFact;
 		this.nombreCliente = nombreCliente;
+		this.apellidoCliente = apellidoCliente;
 		this.dniCliente = dniCliente;
 		this.medioPago = medioPago;
 		this.carritoCliente = carritoCliente;
@@ -49,7 +51,15 @@ public class Factura {
 	public void setNombreCliente(String nombreCliente) {
 		this.nombreCliente = nombreCliente;
 	}
+	
+	public String getApellidoCliente() {
+		return apellidoCliente;
+	}
 
+	public void setApellidoCliente(String apellidoCliente) {
+		this.apellidoCliente = apellidoCliente;
+	}
+	
 	public String getDniCliente() {
 		return dniCliente;
 	}
@@ -100,7 +110,7 @@ public class Factura {
 
 	@Override
 	public String toString() {
-		return "Factura [numeroFactura=" + numeroFactura + ", nombreCliente=" + nombreCliente + ", dniCliente="
+		return "Factura [numeroFactura=" + numeroFactura + ", nombreCliente=" + nombreCliente + ", apellidoCliente=" + apellidoCliente + ", dniCliente="
 				+ dniCliente + ", medioPago=" + medioPago + ", carritoCliente=" + carritoCliente + ", condicionFiscal="
 				+ condicionFiscal + ", total=" + total + ", fecha=" + fecha + "]";
 	}

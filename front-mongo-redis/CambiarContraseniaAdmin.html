@@ -66,7 +66,7 @@
             color: #333;
         }
 
-        form input[type="text"], form button {
+        form input, form button {
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
@@ -77,7 +77,7 @@
             transition: border-color 0.3s;
         }
 
-        form input[type="text"]:focus {
+        form input:focus {
             outline: none;
             border-color: #007BFF;
         }
@@ -115,11 +115,11 @@
         <h2>Cambiar Contraseña</h2>
         <form id="cambiarContraseniaForm">
             <label for="actual">Contraseña actual:</label>
-            <input type="text" id="actual" name="actual" required>
+            <input type="password" id="actual" name="actual" required>
             <label for="nueva1">Nueva contraseña:</label>
-            <input type="text" id="nueva1" name="nueva1" required>
+            <input type="password" id="nueva1" name="nueva1" required>
             <label for="nueva2">Repetir nueva contraseña:</label>
-            <input type="text" id="nueva2" name="nueva2" required>
+            <input type="password" id="nueva2" name="nueva2" required>
             <button type="submit">Cambiar Contraseña</button>
         </form>
     </div>

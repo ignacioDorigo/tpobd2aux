@@ -92,10 +92,10 @@ public class ClienteService {
 	}
 
 //  Listo
-	public String registerCliente(String documento, String nombre, String mail, String password, String direccion) {
+	public String registerCliente(String documento, String nombre, String apellido, String mail, String password, String direccion) {
 		Optional<Cliente> clienteOptional = repositorio.findById(mail);
 		if (clienteOptional.isEmpty()) {
-			Cliente clienteNuevo = new Cliente(documento, nombre, mail, password, direccion);
+			Cliente clienteNuevo = new Cliente(documento, nombre, apellido, mail, password, direccion);
 			repositorio.save(clienteNuevo);
 			emailSenderService.sendEmail("ferorrego67@gmail.com", "Registro en APP",
 					nombre + " te has registrado exitosamente en la app");
@@ -328,9 +328,10 @@ public class ClienteService {
 		if (clienteOptional.isPresent()) {
 			Cliente cliente = clienteOptional.get();
 			String nombreCliente = cliente.getNombre();
+			String apellidoCliente = cliente.getApellido();
 			String dniCliente = cliente.getDocumento();
 			Carrito carritoCliente = cliente.getCarrito();
-			Factura factura = new Factura(nombreCliente, dniCliente, medioPago, carritoCliente, condicionFiscal);
+			Factura factura = new Factura(nombreCliente, apellidoCliente, dniCliente, medioPago, carritoCliente, condicionFiscal);
 			facturaRepository.save(factura);
 			ArrayList<Factura> facturas = cliente.getFacturas();
 			facturas.add(factura);

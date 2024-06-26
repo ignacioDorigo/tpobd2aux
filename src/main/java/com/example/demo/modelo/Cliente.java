@@ -15,19 +15,21 @@ public class Cliente {
 	private String password;
 	private String documento;
 	private String nombre;
+	private String apellido;
 	private String direccion;
 	private String categoria;
-	private ArrayList<Factura> facturas;
+ ArrayList<Factura> facturas;
 	private Carrito carrito;
 
 	public Cliente() {
 
 	}
 
-	public Cliente(String documento, String nombre, String mail, String password, String direccion) {
+	public Cliente(String documento, String nombre, String apellido, String mail, String password, String direccion) {
 		super();
 		this.documento = documento;
 		this.nombre = nombre;
+		this.apellido = apellido;
 		this.mail = mail;
 		this.password = password;
 		this.direccion = direccion;
@@ -62,6 +64,14 @@ public class Cliente {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+	
+	public String getApellido() {
+		return apellido;
+	}
+
+	public void setApellido(String apellido) {
+		this.apellido = apellido;
 	}
 
 	public String getMail() {
@@ -114,7 +124,7 @@ public class Cliente {
 
 	@Override
 	public String toString() {
-		return "Cliente [documento=" + documento + ", nombre=" + nombre + ", mail=" + mail + ", password=" + password
+		return "Cliente [documento=" + documento + ", nombre=" + nombre + ", apellido=" + apellido + ", mail=" + mail + ", password=" + password
 				+ ", direccion=" + direccion + ", categoria=" + categoria + ", facturas=" + facturas + ", carrito="
 				+ carrito + "]";
 	}

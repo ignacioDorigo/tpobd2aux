@@ -160,9 +160,9 @@ public class Controller {
 	}
 
 	@PostMapping("/registerCliente")
-	public ResponseEntity<String> registerCliente(@RequestParam String documento, @RequestParam String nombre,
+	public ResponseEntity<String> registerCliente(@RequestParam String documento, @RequestParam String nombre, @RequestParam String apellido,
 			@RequestParam String mail, @RequestParam String password, @RequestParam String direccion) {
-		String respuesta = clienteService.registerCliente(documento, nombre, mail, password, direccion);
+		String respuesta = clienteService.registerCliente(documento, nombre, apellido, mail, password, direccion);
 		if (respuesta.equals("Registro exitoso")) {
 			return ResponseEntity.ok(respuesta);
 		} else {

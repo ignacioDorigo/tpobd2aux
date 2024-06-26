@@ -85,6 +85,7 @@
         
         <div id="clienteInfo">
             <p><strong>Nombre:</strong> <span id="nombre"></span></p>
+            <p><strong>Apellido:</strong> <span id="apellido"></span></p>
             <p><strong>Direccion:</strong> <span id="direccion"></span></p>
             <p><strong>Documento:</strong> <span id="documento"></span></p>
             <p><strong>Categoria:</strong> <span id="categoria"></span></p>
@@ -114,6 +115,7 @@
                 .then(data => {
                     // Mostrar los datos del cliente en la página
                     document.getElementById('nombre').textContent = data.nombre;
+                    document.getElementById('apellido').textContent = data.apellido;
                     document.getElementById('direccion').textContent = data.direccion;
                     document.getElementById('documento').textContent = data.documento;
                     document.getElementById('categoria').textContent = data.categoria;
