@@ -12,7 +12,7 @@ public class Cliente {
 
 	@Id
 	private String mail;
-	private String password;
+	//private String password;
 	private String documento;
 	private String nombre;
 	private String apellido;
@@ -31,7 +31,7 @@ public class Cliente {
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.mail = mail;
-		this.password = password;
+		//this.password = password;
 		this.direccion = direccion;
 		this.facturas = new ArrayList<Factura>();
 		
@@ -82,13 +82,13 @@ public class Cliente {
 		this.mail = mail;
 	}
 
-	public String getPassword() {
-		return password;
-	}
+	//public String getPassword() {
+		//return password;
+	//}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+	//public void setPassword(String password) {
+		//this.password = password;
+	//}
 
 	public String getDireccion() {
 		return direccion;
@@ -124,7 +124,7 @@ public class Cliente {
 
 	@Override
 	public String toString() {
-		return "Cliente [documento=" + documento + ", nombre=" + nombre + ", apellido=" + apellido + ", mail=" + mail + ", password=" + password
+		return "Cliente [documento=" + documento + ", nombre=" + nombre + ", apellido=" + apellido + ", mail=" + mail
 				+ ", direccion=" + direccion + ", categoria=" + categoria + ", facturas=" + facturas + ", carrito="
 				+ carrito + "]";
 	}

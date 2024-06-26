@@ -42,7 +42,7 @@ public class ClienteService {
 //	Cambiar Contrasenia
 //	Todos clientes
 
-	public void guardarEnRedis(Cliente cliente) {
+	public void guardarEnRedis(String mail, String password) {
 		// Crear una fábrica de conexiones Lettuce
 		LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory();
 		connectionFactory.afterPropertiesSet(); // Inicializa la fábrica de conexiones
@@ -53,14 +53,24 @@ public class ClienteService {
 		template.setDefaultSerializer(StringRedisSerializer.UTF_8); // Establece el serializador para las claves y //
 																	// valores
 		template.afterPropertiesSet(); // Inicializa la plantilla de Redis
-
-		String mailAdmin = cliente.getMail();
-		String password = cliente.getPassword();
 // 
-		template.opsForValue().set("cliente:" + mailAdmin, password);
+	    String clave = "cliente:" + mail;
 
-		connectionFactory.destroy();
-		System.out.println("Guardado en Redis");
+	    try {
+	        Boolean actualizado = template.opsForValue().setIfPresent(clave, password);
+	        if (actualizado != null && actualizado) {
+	            System.out.println("Usuario existente actualizado en Redis");
+	        } else {
+	            Boolean creado = template.opsForValue().setIfAbsent(clave, password);
+	            if (creado != null && creado) {
+	                System.out.println("Nuevo usuario creado en Redis");
+	            } else {
+	                System.out.println("No se pudo guardar el usuario en Redis");
+	            }
+	        }
+	    } finally {
+	        connectionFactory.destroy();
+	    }
 	}
 
 	public boolean loginRedis(String mail, String password) {
@@ -99,7 +109,7 @@ public class ClienteService {
 			repositorio.save(clienteNuevo);
 			emailSenderService.sendEmail(mail, "Registro en APP",
 					nombre + " te has registrado exitosamente en la app");
-			guardarEnRedis(clienteNuevo);
+			guardarEnRedis(mail, password);
 			return "Registro exitoso";
 		} else {
 			return "Ese mail ya esta registrado";
@@ -122,7 +132,7 @@ public class ClienteService {
 		Optional<Cliente> clienteOptional = repositorio.findById(mail);
 		if (loginRedis(mail, password) && clienteOptional.isPresent()) {
 			Cliente cliente = clienteOptional.get();
-			if (cliente.getPassword().equals(password)) {
+			if (cliente.getMail().equals(mail)) {
 				return "Login exitoso";
 			} else {
 				return "Contrasena incorrecta";
@@ -135,31 +145,58 @@ public class ClienteService {
 
 //	Listo
 	public String recuperarContrasenaCliente(String mail) {
-		Optional<Cliente> clienteOptional = repositorio.findById(mail);
-		if (clienteOptional.isPresent()) {
-			Cliente cliente = clienteOptional.get();
-			String contrasenia = cliente.getPassword();
-			emailSenderService.sendEmail(mail, "Recupero contrasenia en APP",
-					"Tu contrasenia es : " + contrasenia);
-			return "Envio de contrasenia al mail";
-		} else {
-			return "Error no existe";
-		}
-	}
+		
+	    LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory();
+	    connectionFactory.afterPropertiesSet();
 
+	    RedisTemplate<String, String> template = new RedisTemplate<>();
+	    template.setConnectionFactory(connectionFactory);
+	    template.setDefaultSerializer(StringRedisSerializer.UTF_8);
+	    template.afterPropertiesSet();
+	    
+	    // Genera la clave de Redis
+	    String clave = "cliente:" + mail;
+	    String passwordAlmacenada = template.opsForValue().get(clave);
+	    System.out.println(passwordAlmacenada);
+	    
+		emailSenderService.sendEmail(mail, "Recupero contrasenia en APP",
+					"Tu contrasenia es : " + passwordAlmacenada);
+			return "Envio de contrasenia al mail";
+	}
+	
+	public String obtenerContraRedis(String mail) {
+	    // Configura la conexión a Redis
+	    LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory();
+	    connectionFactory.afterPropertiesSet();
+
+	    RedisTemplate<String, String> template = new RedisTemplate<>();
+	    template.setConnectionFactory(connectionFactory);
+	    template.setDefaultSerializer(StringRedisSerializer.UTF_8);
+	    template.afterPropertiesSet();
+	    
+	    // Genera la clave de Redis
+	    String clave = "cliente:" + mail;
+	    System.out.println("Buscando clave en Redis: " + clave);
+	    String passwordAlmacenada = template.opsForValue().get(clave);
+	    System.out.println(passwordAlmacenada);
+
+	    // Cierra la conexión
+	    connectionFactory.destroy();
+	    
+	    return passwordAlmacenada;
+	}
+	
 //	Listo endpoint falta visual
 	public String cambiarContraseniaCliente(String mail, String actual, String nueva1, String nueva2) {
-		Optional<Cliente> clienteOptional = repositorio.findById(mail);
-		if (clienteOptional.isPresent()) {
-			Cliente cliente = clienteOptional.get();
-			String contrasenia = cliente.getPassword();
-			if (contrasenia.equals(actual)) {
+		//Optional<Cliente> clienteOptional = repositorio.findById(mail);
+		//if (clienteOptional.isPresent()) {
+			//Cliente cliente = clienteOptional.get();
+			//String contrasenia = cliente.getPassword();
+			if (obtenerContraRedis(mail).equals(actual)) {
 				if (nueva1.equals(nueva2)) {
-					cliente.setPassword(nueva1);
-					repositorio.save(cliente);
 					emailSenderService.sendEmail(mail, "Cambio contrasenia en APP",
 							"Has cambiado tu contrasenia, tu nueva contrasenia es: " + nueva1);
-					guardarEnRedis(cliente);
+					guardarEnRedis(mail, nueva1);
 					return "Cambio contrasenia exitoso";
 				} else {
 					return "Las contrasenias no coinciden";
@@ -167,8 +204,8 @@ public class ClienteService {
 			} else {
 				return "Contrasenia actual incorrecta";
 			}
-		}
-		return "Error cliente no encontrado";
+		//}
+		//return "Error cliente no encontrado";
 	}
 
 //	Listo
