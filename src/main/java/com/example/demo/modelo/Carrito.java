@@ -60,8 +60,14 @@ public class Carrito {
 	public void modificarCantidadProducto(Producto p, Integer cantidad) {
 		for (Detalle detalle : detalles) {
 			Producto producDetalle = detalle.getProducto();
+			Integer stock = producDetalle.getStock();
 			if (producDetalle.getId() == p.getId()) {
-				detalle.setCantidad(detalle.getCantidad() + cantidad);
+				if (detalle.getCantidad() + cantidad > stock) {
+					detalle.setCantidad(stock);
+				} else {
+					detalle.setCantidad(detalle.getCantidad() + cantidad);
+				}
+				
 				System.out.println("Cantidad modificada");
 			}
 		}
