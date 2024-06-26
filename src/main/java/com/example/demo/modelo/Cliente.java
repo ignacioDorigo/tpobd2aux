@@ -12,7 +12,6 @@ public class Cliente {
 
 	@Id
 	private String mail;
-	//private String password;
 	private String documento;
 	private String nombre;
 	private String apellido;
@@ -31,7 +30,6 @@ public class Cliente {
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.mail = mail;
-		//this.password = password;
 		this.direccion = direccion;
 		this.facturas = new ArrayList<Factura>();
 		
@@ -81,14 +79,6 @@ public class Cliente {
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
-
-	//public String getPassword() {
-		//return password;
-	//}
-
-	//public void setPassword(String password) {
-		//this.password = password;
-	//}
 
 	public String getDireccion() {
 		return direccion;

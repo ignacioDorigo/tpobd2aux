@@ -188,10 +188,6 @@ public class ClienteService {
 	
 //	Listo endpoint falta visual
 	public String cambiarContraseniaCliente(String mail, String actual, String nueva1, String nueva2) {
-		//Optional<Cliente> clienteOptional = repositorio.findById(mail);
-		//if (clienteOptional.isPresent()) {
-			//Cliente cliente = clienteOptional.get();
-			//String contrasenia = cliente.getPassword();
 			if (obtenerContraRedis(mail).equals(actual)) {
 				if (nueva1.equals(nueva2)) {
 					emailSenderService.sendEmail(mail, "Cambio contrasenia en APP",
@@ -204,8 +200,6 @@ public class ClienteService {
 			} else {
 				return "Contrasenia actual incorrecta";
 			}
-		//}
-		//return "Error cliente no encontrado";
 	}
 
 //	Listo
