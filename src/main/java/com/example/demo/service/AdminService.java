@@ -30,7 +30,7 @@ public class AdminService {
 	@Autowired
 	FacturaRepository facturaRepository;
 
-	public void guardarEnRedis(Admin admin) {
+	public void guardarEnRedis(String mailAdmin, String password) {
 		// Crear una fábrica de conexiones Lettuce
 		LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory();
 		connectionFactory.afterPropertiesSet(); // Inicializa la fábrica de conexiones
@@ -42,15 +42,27 @@ public class AdminService {
 																	// valores
 		template.afterPropertiesSet(); // Inicializa la plantilla de Redis
 
-		String mailAdmin = admin.getMail();
-		String password = admin.getPassword();
-//      Guardamos el objeto (clave , valor)
-		template.opsForValue().set("admin:" + mailAdmin, password);
 ////      Mostrar objeto guardado
 //		System.out.println(template.opsForValue().get("pedro@gmail.com"));
 		// Cerrar la fábrica de conexiones
-		connectionFactory.destroy();
-		System.out.println("Guardado en Redis");
+
+		String clave = "admin:" + mailAdmin;
+
+		try {
+			Boolean actualizado = template.opsForValue().setIfPresent(clave, password);
+			if (actualizado != null && actualizado) {
+				System.out.println("Usuario existente actualizado en Redis");
+			} else {
+				Boolean creado = template.opsForValue().setIfAbsent(clave, password);
+				if (creado != null && creado) {
+					System.out.println("Nuevo usuario creado en Redis");
+				} else {
+					System.out.println("No se pudo guardar el usuario en Redis");
+				}
+			}
+		} finally {
+			connectionFactory.destroy();
+		}
 	}
 
 	public boolean loginRedis(String mail, String password) {
@@ -84,11 +96,11 @@ public class AdminService {
 	public String registerAdmin(String mail, String password, String nombre, String apellido, String documento) {
 		Optional<Admin> adminOptional = repositorio.findById(mail);
 		if (adminOptional.isEmpty()) {
-			Admin nuevo = new Admin(mail, password, nombre, apellido, documento);
+			Admin nuevo = new Admin(mail, nombre, apellido, documento);
 			repositorio.save(nuevo);
 			emailSenderService.sendEmail("ferorrego67@gmail.com", "Registro en APP",
 					"Te has registrado exitosamente en la app");
-			guardarEnRedis(nuevo);
+			guardarEnRedis(mail, password);
 			return "Register Exitoso";
 		} else {
 			return "Ya existe ese mail";
@@ -107,26 +119,20 @@ public class AdminService {
 	}
 
 	public String loginAdmin(String mail, String password) {
-		Optional<Admin> adminOptional = repositorio.findById(mail);
-		if (loginRedis(mail, password) && adminOptional.isPresent()) {
-			Admin admin = adminOptional.get();
-			if (admin.getPassword().equals(password)) {
-				return "Login Exitoso";
-			} else {
-				return "Contrasena incorrecta";
-			}
+		if (loginRedis(mail, password)) {
+			return "Login Exitoso";
+
 		} else {
-			return "Usuario No Registrado";
+			return "Login No exitoso";
 		}
 	}
 
 	public String olvideContrasena(String mail) {
-		Optional<Admin> adminOptional = repositorio.findById(mail);
-		if (adminOptional.isPresent()) {
-			Admin admin = adminOptional.get();
-			String contrasenia = admin.getPassword();
+		String contrasena = extraerContrasenaRedis(mail);
+		if (contrasena != null) {
+
 			emailSenderService.sendEmail("ferorrego67@gmail.com", "Recupero contrasenia en APP",
-					"Tu contrasenia es : " + contrasenia);
+					"Tu contrasenia es : " + contrasena);
 			return "Envio de contrasenia al mail";
 		} else {
 			return "Admin encontrado";
@@ -144,23 +150,19 @@ public class AdminService {
 	}
 
 	public String cambiarContraseniaAdmin(String mail, String actual, String nueva1, String nueva2) {
-		Optional<Admin> adminOptional = repositorio.findById(mail);
-		if (adminOptional.isPresent()) {
-			Admin admin = adminOptional.get();
-			String contrasenia = admin.getPassword();
+		String contrasenia = extraerContrasenaRedis(mail);
+		if (contrasenia != null) {
+			System.out.println("contrasenia: " + contrasenia);
 			if (contrasenia.equals(actual)) {
 				if (nueva1.equals(nueva2)) {
-					admin.setPassword(nueva1);
-					repositorio.save(admin);
 					emailSenderService.sendEmail("ferorrego67@gmail.com", "Cambio contrasenia en APP",
 							"Has cambiado tu contrasenia, tu nueva contrasenia es: " + nueva1);
-					guardarEnRedis(admin);
+					guardarEnRedis(mail, nueva1);
 					return "Cambio contrasenia exitoso";
 
 				} else {
 					return "Las contrasenias nuevas no coinciden";
 				}
-
 			} else {
 				return "No coincide la contrasenia actual";
 			}
@@ -173,4 +175,24 @@ public class AdminService {
 		return facturaRepository.findAll();
 	}
 
+	public String extraerContrasenaRedis(String mail){
+
+		LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory();
+		connectionFactory.afterPropertiesSet(); // Inicializa la fábrica de conexiones
+
+		RedisTemplate<String, String> template = new RedisTemplate<>();
+		template.setConnectionFactory(connectionFactory);
+		template.setDefaultSerializer(StringRedisSerializer.UTF_8);
+		template.afterPropertiesSet();
+
+//		Si encuentra el mail, devuelve el password
+		String clave = "admin:" + mail;
+		String resultado = template.opsForValue().get(clave);
+
+		return resultado;
+	}
+
 }
+
+
+

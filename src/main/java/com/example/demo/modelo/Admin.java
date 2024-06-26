@@ -8,7 +8,6 @@ public class Admin {
 
 	@Id
 	private String mail;
-	private String password;
 	private String nombre;
 	private String apellido;
 	private String documento;
@@ -17,10 +16,9 @@ public class Admin {
 
 	}
 
-	public Admin(String mail, String password, String nombre, String apellido, String documento) {
+	public Admin(String mail, String nombre, String apellido, String documento) {
 		super();
 		this.mail = mail;
-		this.password = password;
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.documento = documento;
@@ -32,14 +30,6 @@ public class Admin {
 
 	public void setMail(String mail) {
 		this.mail = mail;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getNombre() {
@@ -68,7 +58,7 @@ public class Admin {
 
 	@Override
 	public String toString() {
-		return "Admin [mail=" + mail + ", password=" + password + ", nombre=" + nombre + ", apellido=" + apellido
+		return "Admin [mail=" + mail + ", nombre=" + nombre + ", apellido=" + apellido
 				+ ", documento=" + documento + "]";
 	}
 
