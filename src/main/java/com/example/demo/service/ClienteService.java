@@ -57,7 +57,7 @@ public class ClienteService {
 		String mailAdmin = cliente.getMail();
 		String password = cliente.getPassword();
 // 
-		template.opsForValue().set(mailAdmin, password);
+		template.opsForValue().set("cliente:" + mailAdmin, password);
 
 		connectionFactory.destroy();
 		System.out.println("Guardado en Redis");
@@ -73,7 +73,8 @@ public class ClienteService {
 		template.afterPropertiesSet();
 
 //		Si encuentra el mail, devuelve el password
-		String resultado = template.opsForValue().get(mail);
+		String clave = "cliente:" + mail;
+		String resultado = template.opsForValue().get(clave);
 		if (resultado != null) {
 			System.out.println("Mail Redis encontrado");
 			if (resultado.equals(password)) {

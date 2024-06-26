@@ -45,7 +45,7 @@ public class AdminService {
 		String mailAdmin = admin.getMail();
 		String password = admin.getPassword();
 //      Guardamos el objeto (clave , valor)
-		template.opsForValue().set(mailAdmin, password);
+		template.opsForValue().set("admin:" + mailAdmin, password);
 ////      Mostrar objeto guardado
 //		System.out.println(template.opsForValue().get("pedro@gmail.com"));
 		// Cerrar la fábrica de conexiones
@@ -63,7 +63,8 @@ public class AdminService {
 		template.afterPropertiesSet();
 
 //		Si encuentra el mail, devuelve el password
-		String resultado = template.opsForValue().get(mail);
+		String clave = "admin:" + mail;
+		String resultado = template.opsForValue().get(clave);
 		if (resultado != null) {
 			System.out.println("Mail Redis encontrado");
 			if (resultado.equals(password)) {
