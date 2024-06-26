@@ -107,6 +107,12 @@
             margin-right: 10px;
             padding: 5px;
         }
+
+        .btn-disabled {
+            background-color: grey;
+            cursor: not-allowed;
+        }
+
     </style>
 </head>
 <body>
@@ -145,14 +151,21 @@
                         data.forEach(producto => {
                             const card = document.createElement('div');
                             card.className = 'card';
+
+                            const inputDisabled = producto.stock === 0 ? 'disabled' : '';
+                            const inputValue = producto.stock === 0 ? 0 : 1;
+                            const buttonDisabled = producto.stock === 0 ? 'disabled' : '';
+                            const buttonClass = producto.stock === 0 ? 'btn-anadir-carrito btn-disabled' : 'btn-anadir-carrito';
+                            const buttonText = producto.stock === 0 ? 'Sin stock' : 'Añadir al carrito';
+
                             card.innerHTML = `
                                 <p><strong>ID:</strong> ${producto.id}</p>
                                 <p><strong>Nombre:</strong> ${producto.nombre}</p>
                                 <p><strong>Precio:</strong> $${producto.precio}</p>
                                 <p><strong>Stock:</strong> ${producto.stock}</p>
                                 <img src="${producto.imagen}" alt="${producto.nombre}" style="width: 100px; height: auto;">
-                                <input type="number" class="cantidad-input" id="cantidad-${producto.id}" min="1" max="${producto.stock}" value="1">
-                                <button class="btn-anadir-carrito" onclick="anadirAlCarrito(${producto.id})">Añadir al carrito</button>
+                                <input type="number" class="cantidad-input" id="cantidad-${producto.id}" min="1" max="${producto.stock}" value="${inputValue}" ${inputDisabled}>
+                                <button class="${buttonClass}" onclick="anadirAlCarrito(${producto.id})" ${buttonDisabled}>${buttonText}</button>
                             `;
                             productosContainer.appendChild(card);
                         });
