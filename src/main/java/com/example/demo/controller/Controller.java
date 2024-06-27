@@ -146,7 +146,13 @@ public class Controller {
 	public List<Factura> verFacturas() {
 		return adminService.facturas();
 	}
-
+	
+	@GetMapping("/ultimoIdProducto")
+	public Integer obtenerId() {
+		Integer ultimoId = productoService.obtenerUltimoId();
+		return ultimoId;
+	}
+	
 //	------------------------- CLIENTE ----------------
 
 	@PostMapping("/loginCliente")

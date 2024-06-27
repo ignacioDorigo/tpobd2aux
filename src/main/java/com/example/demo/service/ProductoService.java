@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.modelo.Producto;
@@ -88,5 +89,13 @@ public class ProductoService {
 	public List<Producto> productos() {
 		return repositorio.findAll();
 	}
-
+	
+	public Integer obtenerUltimoId() {
+		List<Producto> productoOptional = repositorio.findAll(Sort.by(Sort.Direction.DESC, "_id"));
+		if (!productoOptional.isEmpty()) {
+            return productoOptional.get(0).getId();
+        } else {
+            return 0; // Devuelve 0 si no hay productos
+        }
+	}
 }
