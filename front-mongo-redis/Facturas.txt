@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Compras</title>
+    <title>Facturas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -69,7 +69,7 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             transition: .3s ease-in-out;
         }
-        .card:hover {
+        .card:hover{
             scale: 1.02;
         }
 
@@ -83,21 +83,18 @@
             display: none; /* Detalles ocultos inicialmente */
         }
 
-        .detalle-producto {
+        .detalle-producto{
             border: 2px solid #ccc;
             margin-top: 5px;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             transition: .3s ease-in-out;
-            display: flex;
-
-            
         }
 
-        .detalle-producto:hover {
+        .detalle-producto:hover{
             scale: 1.02;
         }
-        #botoncito {
+        #botoncito{
             color: white;
             background-color: #037bff;
             width: 10%;
@@ -105,32 +102,23 @@
             font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
-            border: 2px solid #ffffff;
         }
 
-        .detalle-producto img {
-            max-width: 100px;
-            max-height: 100px;
-            margin-right: 10px;
-            border-radius: 5px;
-
-        }
-            
-        
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <a href="PerfilCliente.html?mail=${encodeURIComponent(mail)}" id="perfilLink">Perfil</a>
-        <a href="CambiarContraseniaCliente.html?mail=${encodeURIComponent(mail)}" id="cambiarContraseniaLink">Cambiar Contraseña</a>
-        <a href="VerMisFacturas.html?mail=${encodeURIComponent(mail)}" id="misComprasLink">Mis Compras</a>
-        <a href="VerCarrito.html?mail=${encodeURIComponent(mail)}" id="verCarritoLink">Ver Carrito</a>
-        <a href="VerProductosCliente.html?mail=${encodeURIComponent(mail)}" id="verProductosLink">Ver Productos</a>
+        <a href="PerfilAdmin.html?mail=${encodeURIComponent(mail)}" id="perfilLink">Perfil</a>
+        <a href="CambiarContraseniaAdmin.html?mail=${encodeURIComponent(mail)}" id="cambiarContraseniaLink">Cambiar Contraseña</a>
+        <a href="VerProductos.html?mail=${encodeURIComponent(mail)}" id="verProductosLink">Ver Productos</a>
+        <a href="AgregarProducto.html?mail=${encodeURIComponent(mail)}" id="agregarProductoLink">Agregar Producto</a>
+        <a href="Clientes.html?mail=${encodeURIComponent(mail)}" id="clientesLink">Clientes</a>
+        <a href="Facturas.html?mail=${encodeURIComponent(mail)}" id="facturasLink">Facturas</a>
         <a href="Index.html" id="cerrarSesionLink">Cerrar Sesión</a>
     </div>
 
     <div class="content">
-        <h2>Mis Compras</h2>
+        <h2>Facturas</h2>
         <div id="facturasContainer"></div>
     </div>
 
@@ -140,7 +128,7 @@
         console.log("email: ", mail);
 
         function obtenerFacturas() {
-            fetch(`http://localhost:8080/tpo/verMisFacturas?mail=${encodeURIComponent(mail)}`)
+            fetch('http://localhost:8080/tpo/verFacturas')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Error en la solicitud: ' + response.status);
@@ -154,7 +142,7 @@
                         card.className = 'card';
                         card.innerHTML = `
                             <p><strong>Número de Factura:</strong> ${factura.numeroFactura}</p>
-                            <p><strong>Nombre del Cliente:</strong> ${factura.nombreCliente}</p>
+                            <p><strong>Nombre del Cliente:</strong> ${factura.nombreCliente} ${factura.apellidoCliente}</p>
                             <p><strong>DNI del Cliente:</strong> ${factura.dniCliente}</p>
                             <p><strong>Medio de Pago:</strong> ${factura.medioPago}</p>
                             <p><strong>Condición Fiscal:</strong> ${factura.condicionFiscal}</p>
@@ -164,16 +152,10 @@
                             <div class="detalles">
                                 ${factura.carritoCliente.detalles.map(detalle => `
                                     <div class="detalle-producto">
-                                        <div class="div-producto-imagen">
-                                            <img src="${detalle.producto.imagen}" alt="Imagen de ${detalle.producto.nombre}">
-                                        </div>
-                                    
-                                        <div class="div-producto-detalle">
-                                            <p><strong>Producto:</strong> ${detalle.producto.nombre}</p>
-                                            <p><strong>Cantidad:</strong> ${detalle.cantidad}</p>
-                                            <p><strong>Precio: $</strong> ${detalle.producto.precio}</p>
-                                            <p><strong>Subtotal: $</strong> ${detalle.producto.precio * detalle.cantidad}</p>
-                                        </div>
+                                        <p><strong>Producto:</strong> ${detalle.producto.nombre}</p>
+                                        <p><strong>Cantidad:</strong> ${detalle.cantidad}</p>
+                                        <p><strong>Precio: $</strong> ${detalle.producto.precio}</p>
+                                        <p><strong>Subtotal: $</strong> ${detalle.producto.precio * detalle.cantidad}</p>
                                     </div>
                                 `).join('')}
                             </div>
@@ -202,27 +184,32 @@
 
         document.getElementById('perfilLink').addEventListener('click', function(event) {
             event.preventDefault();
-            window.location.href = `PerfilCliente.html?mail=${encodeURIComponent(mail)}`;
+            window.location.href = `PerfilAdmin.html?mail=${encodeURIComponent(mail)}`;
         });
 
         document.getElementById('cambiarContraseniaLink').addEventListener('click', function(event) {
             event.preventDefault();
-            window.location.href = `CambiarContraseniaCliente.html?mail=${encodeURIComponent(mail)}`;
-        });
-
-        document.getElementById('misComprasLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            window.location.href = `VerMisFacturas.html?mail=${encodeURIComponent(mail)}`;
-        });
-
-        document.getElementById('verCarritoLink').addEventListener('click', function(event) {
-            event.preventDefault();
-            window.location.href = `VerCarrito.html?mail=${encodeURIComponent(mail)}`;
+            window.location.href = `CambiarContraseniaAdmin.html?mail=${encodeURIComponent(mail)}`;
         });
 
         document.getElementById('verProductosLink').addEventListener('click', function(event) {
             event.preventDefault();
-            window.location.href = `VerProductosCliente.html?mail=${encodeURIComponent(mail)}`;
+            window.location.href = `VerProductos.html?mail=${encodeURIComponent(mail)}`;
+        });
+
+        document.getElementById('agregarProductoLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            window.location.href = `AgregarProducto.html?mail=${encodeURIComponent(mail)}`;
+        });
+
+        document.getElementById('clientesLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            window.location.href = `Clientes.html?mail=${encodeURIComponent(mail)}`;
+        });
+
+        document.getElementById('facturasLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            window.location.href = `Facturas.html?mail=${encodeURIComponent(mail)}`;
         });
 
         document.getElementById('cerrarSesionLink').addEventListener('click', function(event) {

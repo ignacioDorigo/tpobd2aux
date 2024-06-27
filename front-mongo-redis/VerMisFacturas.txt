@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ver Productos</title>
+    <title>Mis Compras</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,7 +24,7 @@
             flex-direction: column;
             text-align: center;
             align-items: stretch;
-            position: fixed;
+            position: fixed; /* Barra de navegación fija */
             top: 0;
             left: 0;
         }
@@ -44,16 +44,10 @@
             background-color: #0358a7;
         }
 
-        #productosContainer{
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-        }
-
         .content {
-            margin-left: 200px;
+            margin-left: 200px; /* Ajuste para el ancho de la barra lateral */
             padding: 20px;
-            width: calc(100% - 200px);
+            width: calc(100% - 200px); /* Ajuste para el ancho de la barra lateral */
         }
 
         .content h2 {
@@ -72,12 +66,10 @@
             border-radius: 5px;
             padding: 20px;
             margin-bottom: 20px;
-            max-width: 400px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             transition: .3s ease-in-out;
         }
-
-        .card:hover {
+        .card:hover{
             scale: 1.02;
         }
 
@@ -85,7 +77,13 @@
             margin: 5px 0;
         }
 
-        .detalle-producto {
+        .detalles {
+            margin-top: 10px;
+            padding-left: 20px;
+            display: none; /* Detalles ocultos inicialmente */
+        }
+
+        .detalle-producto{
             border: 2px solid #ccc;
             margin-top: 5px;
             border-radius: 5px;
@@ -93,31 +91,18 @@
             transition: .3s ease-in-out;
         }
 
-        .detalle-producto:hover {
+        .detalle-producto:hover{
             scale: 1.02;
         }
-
-        .btn-anadir-carrito {
+        #botoncito{
             color: white;
-            background-color: green;
-            width: auto;
-            padding: 10px;
+            background-color: #037bff;
+            width: 10%;
+            padding: 5px;
             font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .cantidad-input {
-            width: 60px;
-            margin-top: 10px;
-            margin-right: 10px;
-            padding: 5px;
-        }
-
-        .btn-disabled {
-            background-color: grey;
-            cursor: not-allowed;
+            border: 2px solid #ffffff;
         }
 
     </style>
@@ -133,8 +118,8 @@
     </div>
 
     <div class="content">
-        <h2>Productos Disponibles</h2>
-        <div id="productosContainer"></div>
+        <h2>Mis Compras</h2>
+        <div id="facturasContainer"></div>
     </div>
 
     <script>
@@ -142,8 +127,8 @@
         const mail = urlParams.get('mail');
         console.log("email: ", mail);
 
-        function obtenerProductos() {
-            fetch(`http://localhost:8080/tpo/productos`)
+        function obtenerFacturas() {
+            fetch(`http://localhost:8080/tpo/verMisFacturas?mail=${encodeURIComponent(mail)}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Error en la solicitud: ' + response.status);
@@ -151,65 +136,51 @@
                     return response.json();
                 })
                 .then(data => {
-                    const productosContainer = document.getElementById('productosContainer');
-                    productosContainer.innerHTML = ''; // Limpiar contenido anterior
-
-                    if (Array.isArray(data) && data.length > 0) {
-                        data.forEach(producto => {
-                            const card = document.createElement('div');
-                            card.className = 'card';
-
-                            const inputDisabled = producto.stock === 0 ? 'disabled' : '';
-                            const inputValue = producto.stock === 0 ? 0 : 1;
-                            const buttonDisabled = producto.stock === 0 ? 'disabled' : '';
-                            const buttonClass = producto.stock === 0 ? 'btn-anadir-carrito btn-disabled' : 'btn-anadir-carrito';
-                            const buttonText = producto.stock === 0 ? 'Sin stock' : 'Añadir al carrito';
-
-                            card.innerHTML = `
-                                <p><strong>ID:</strong> ${producto.id}</p>
-                                <p><strong>Nombre:</strong> ${producto.nombre}</p>
-                                <p><strong>Precio:</strong> $${producto.precio}</p>
-                                <p><strong>Stock:</strong> ${producto.stock}</p>
-                                <img src="${producto.imagen}" alt="${producto.nombre}" style="width: 100px; height: auto;">
-                                <input type="number" class="cantidad-input" id="cantidad-${producto.id}" min="1" max="${producto.stock}" value="${inputValue}" ${inputDisabled}>
-                                <button class="${buttonClass}" onclick="anadirAlCarrito(${producto.id})" ${buttonDisabled}>${buttonText}</button>
-                            `;
-                            productosContainer.appendChild(card);
-                        });
-                    } else {
-                        productosContainer.innerHTML = '<p>No hay productos disponibles.</p>';
-                    }
+                    const facturasContainer = document.getElementById('facturasContainer');
+                    data.forEach(factura => {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.innerHTML = `
+                            <p><strong>Número de Factura:</strong> ${factura.numeroFactura}</p>
+                            <p><strong>Nombre del Cliente:</strong> ${factura.nombreCliente} ${factura.apellidoCliente}</p>
+                            <p><strong>DNI del Cliente:</strong> ${factura.dniCliente}</p>
+                            <p><strong>Medio de Pago:</strong> ${factura.medioPago}</p>
+                            <p><strong>Condición Fiscal:</strong> ${factura.condicionFiscal}</p>
+                            <p><strong>Total Factura:</strong> $${factura.total}</p>
+                            <p><strong>Fecha:</strong> ${factura.fecha}</p>
+                            <button id="botoncito" onclick="toggleDetalles(this)">Ver Detalles</button>
+                            <div class="detalles">
+                                ${factura.carritoCliente.detalles.map(detalle => `
+                                    <div class="detalle-producto">
+                                        <p><strong>Producto:</strong> ${detalle.producto.nombre}</p>
+                                        <p><strong>Cantidad:</strong> ${detalle.cantidad}</p>
+                                        <p><strong>Precio: $</strong> ${detalle.producto.precio}</p>
+                                        <p><strong>Subtotal: $</strong> ${detalle.producto.precio * detalle.cantidad}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        facturasContainer.appendChild(card);
+                    });
                 })
                 .catch(error => {
-                    console.error('Error al obtener los productos:', error);
-                    alert('Error al obtener los productos. Por favor, inténtelo nuevamente.');
+                    console.error('Error al obtener facturas:', error);
+                    alert('Error al obtener facturas. Por favor, inténtelo nuevamente.');
                 });
         }
 
-        function anadirAlCarrito(id) {
-            const cantidadInput = document.getElementById(`cantidad-${id}`);
-            const cantidad = cantidadInput.value;
-            
-            fetch(`http://localhost:8080/tpo/agregarProductoCarrito?mail=${encodeURIComponent(mail)}&id=${id}&cantidad=${cantidad}`, {
-                method: 'PUT'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la solicitud: ' + response.status);
-                }
-                return response.text();
-            })
-            .then(data => {
-                alert(data);
-                obtenerProductos(); // Actualizar la lista de productos
-            })
-            .catch(error => {
-                console.error('Error al añadir el producto al carrito:', error);
-                alert('Error al añadir el producto al carrito. Por favor, inténtelo nuevamente.');
-            });
+        function toggleDetalles(button) {
+            const detalles = button.nextElementSibling;
+            if (detalles.style.display === "none" || detalles.style.display === "") {
+                detalles.style.display = "block";
+                button.textContent = "Ocultar Detalles";
+            } else {
+                detalles.style.display = "none";
+                button.textContent = "Ver Detalles";
+            }
         }
 
-        obtenerProductos();
+        obtenerFacturas();
 
         document.getElementById('perfilLink').addEventListener('click', function(event) {
             event.preventDefault();

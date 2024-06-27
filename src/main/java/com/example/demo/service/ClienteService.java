@@ -107,7 +107,7 @@ public class ClienteService {
 		if (clienteOptional.isEmpty()) {
 			Cliente clienteNuevo = new Cliente(documento, nombre, apellido, mail, password, direccion);
 			repositorio.save(clienteNuevo);
-			emailSenderService.sendEmail(mail, "Registro en APP",
+			emailSenderService.sendEmail("ferorrego67@gmail.com", "Registro en APP",
 					nombre + " te has registrado exitosamente en la app");
 			guardarEnRedis(mail, password);
 			return "Registro exitoso";
@@ -159,7 +159,7 @@ public class ClienteService {
 	    String passwordAlmacenada = template.opsForValue().get(clave);
 	    System.out.println(passwordAlmacenada);
 	    
-		emailSenderService.sendEmail(mail, "Recupero contrasenia en APP",
+		emailSenderService.sendEmail("ferorrego67@gmail.com", "Recupero contrasenia en APP",
 					"Tu contrasenia es : " + passwordAlmacenada);
 			return "Envio de contrasenia al mail";
 	}
@@ -194,7 +194,7 @@ public class ClienteService {
 			//String contrasenia = cliente.getPassword();
 			if (obtenerContraRedis(mail).equals(actual)) {
 				if (nueva1.equals(nueva2)) {
-					emailSenderService.sendEmail(mail, "Cambio contrasenia en APP",
+					emailSenderService.sendEmail("ferorrego67@gmail.com", "Cambio contrasenia en APP",
 							"Has cambiado tu contrasenia, tu nueva contrasenia es: " + nueva1);
 					guardarEnRedis(mail, nueva1);
 					return "Cambio contrasenia exitoso";
